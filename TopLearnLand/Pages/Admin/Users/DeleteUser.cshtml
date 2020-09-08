@@ -1,0 +1,71 @@
+﻿@page "{userId}"
+@using TopLearnLand_Core.Convertors
+@model TopLearnLand.Pages.Admin.Users.DeleteUserModel
+@{
+    ViewData["Title"] = "DeleteUser";
+    Layout = "~/Pages/Shared/_AdminAdvanceLayout.cshtml";
+}
+
+<div class="container">
+    <!--Users List-->
+    <form role="form" method="post">
+        <input type="hidden" name="userId" value="@ViewData["UserId"].ToString()"/>
+        <div class="card card-dark card-outline boxshadow">
+            <div class="card-header border-transparent">
+                <h3 class="card-title badge badge-light">Latest Users</h3>
+                <!--SearchBox-->
+                <!--/SearchBox-->
+                <div class="card-tools">
+                    <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                        <i class="fas fa-minus"></i>
+                    </button>
+                    <button type="button" class="btn btn-tool" data-card-widget="remove">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            </div>
+            <!-- /.card-header -->
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table m-0">
+                        <thead>
+                        <tr>
+                            <th>UserName</th>
+                            <th>Email</th>
+                            <th>Register Date</th>
+                            <th>User Avatar</th>
+                            <th>Actions</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td><span class="badge badge-light" style="font-size: 14px">@Model.InformationUser.UserName</span></td>
+                            <td><span class="badge badge-secondary" style="font-size: 14px">@Model.InformationUser.Email</span></td>
+                            <td>
+                                <div class="badge badge-warning" style="font-size: 16px" data-color="#00a65a" data-height="20">@Model.InformationUser.RegisterDate.ToShamsiDate()</div>
+                            </td>
+                            <td>
+                                <div class="image container">
+                                    <img style="max-width: 50px; max-height: 50px" src="/AdminContent/AdminAdvance/dist/img/user2-160x160.jpg" class="img-circle elevation-2" alt="User Image">
+                                </div>
+                            </td>
+                            <td>
+                                <a href="/Admin/Users/RecoveryUser/@ViewData["UserId"].ToString()" class="btn btn-sm btn-outline-secondary"><i class="fas fa-user-edit"></i>Recovery</a>
+                                <button type="submit"  class="btn btn-sm btn-danger"><i class="fas fa-user-edit"></i>Delete></button>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <!-- /.table-responsive -->
+            </div>
+            <!-- /.card-body -->
+            <div class="card-footer clearfix">
+                <a href="/Admin/Users" class="btn btn-sm btn-info float-right"><i class="fas fa-user"></i> Back To Users </a>
+            </div>
+            <!-- /.card-footer -->
+        </div>
+    </form>
+    <!--/Users List-->
+
+</div>

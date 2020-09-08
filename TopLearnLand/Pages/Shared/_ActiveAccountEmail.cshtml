@@ -1,0 +1,16 @@
+﻿@model TopLearnLand.Pages.Admin.Users.CreateUserModel
+@{
+    Layout = null;
+}
+
+<main class="client-page">
+    <div class="container-content">
+
+        <header><h2> @Model.CreateUser.UserName عزیز! </h2></header>
+        <p>باتشکر ازثبت نام شما برای ادامه مراحل ثبت نام روی لینک فعال سازی کلیک کنید</p>
+        <p>
+            <a class="btn btn-primary btn-block img-rounded" href="https://localhost:44376/Account/ActiveAccount/@Model.CreateUser.ActiveCode">فعالسازی حساب کاربری</a>
+        </p>
+
+    </div>
+</main>

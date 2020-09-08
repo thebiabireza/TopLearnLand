@@ -1,0 +1,126 @@
+﻿
+@model TopLearnLand_Core.DTOs_ViewModels_.RegisterViewModels
+@{
+    ViewData["Title"] = "Register";
+}
+
+
+<nav aria-label="breadcrumb">
+    <ul class="breadcrumb">
+        <li class="breadcrumb-item"><a href="#">تاپ لرن</a></li>
+        <li class="breadcrumb-item active" aria-current="page">عضویت در سایت</li>
+    </ul>
+</nav>
+
+<main class="client-page">
+    <div class="container-content">
+
+        <header><h2> عضویت در سایت </h2></header>
+
+        <div class="form-layer">
+
+            <form asp-action="Register" method="post" _lpchecked="1">
+
+                <div class="input-group">
+                    <span class="input-group-addon" id="username"><i class="zmdi zmdi-account"></i></span>
+                    <input asp-for="@Model.UserName" type="text" class="form-control" placeholder="نام و نام خانوادگی" aria-describedby="username">
+                </div>
+                <span class="alert-danger" asp-validation-for="UserName"></span>
+                <div class="input-group">
+                    <span class="input-group-addon" id="email-address"><i class="zmdi zmdi-email"></i></span>
+                    <input asp-for="@Model.Email" type="text" class="form-control" placeholder="ایمیل" aria-describedby="email-address">
+                </div>
+                <span class="alert-danger" asp-validation-for="Email"></span>
+                <div class="input-group">
+                    <span class="input-group-addon" id="password"><i class="zmdi zmdi-lock"></i></span>
+                    <input asp-for="@Model.Password" type="password" class="form-control" placeholder="رمز عبور " aria-describedby="password">
+                </div>
+                <span class="alert-danger" asp-validation-for="Password"></span>
+                <div class="input-group">
+                    <span class="input-group-addon" id="password"><i class="zmdi zmdi-lock"></i></span>
+                    <input asp-for="@Model.RePassword" type="password" class="form-control" placeholder="تکرار رمز عبور " aria-describedby="repassword">
+                </div>
+                
+                <div class="link">
+                    <a href=""> <i class="zmdi zmdi-assignment"></i> قوانین و مقررات سایت !</a>
+                    <a href=""> <i class="zmdi zmdi-account"></i> ورود به سایت </a>
+                </div>
+
+                <button class="btn btn-success"> عضویت در سایت </button>
+
+            </form>
+        </div>
+
+    </div>
+</main>
+
+<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal" data-whatever="">Open modal for </button>
+
+<div class="modal fade zmdi-format-textdirection-r-to-l client-page " id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog "  role="document">
+        <div class="modal-content container-content" style="box-shadow:1px -2px 10px 10px rgba(0,0,0,0.4); ">
+            <div class="modal-header">
+                <header><h2> عضویت در سایت </h2></header>
+
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+
+            </div>
+            <div class="modal-body">
+                <form asp-action="Register" method="post" _lpchecked="1">
+
+                    <div class="input-group">
+                        <span class="input-group-addon" id="username"><i class="zmdi zmdi-account"></i></span>
+                        <input asp-for="@Model.UserName" type="text" class="form-control" placeholder="نام و نام خانوادگی" aria-describedby="username">
+                    </div>
+                    <span class="alert-danger" asp-validation-for="UserName"></span>
+                    <hr />
+                    <div class="input-group">
+                        <span class="input-group-addon" id="email-address"><i class="zmdi zmdi-email"></i></span>
+                        <input asp-for="@Model.Email" type="text" class="form-control" placeholder="ایمیل" aria-describedby="email-address">
+                    </div>
+                    <span class="alert-danger" asp-validation-for="Email"></span>
+                    <hr />
+                    <div class="input-group">
+                        <span class="input-group-addon" id="password"><i class="zmdi zmdi-lock"></i></span>
+                        <input asp-for="@Model.Password" type="password" class="form-control" placeholder="رمز عبور " aria-describedby="password">
+                    </div>
+                    <span class="alert-danger" asp-validation-for="Password"></span>
+                    <div class="input-group">
+                        <span class="input-group-addon" id="password"><i class="zmdi zmdi-lock"></i></span>
+                        <input asp-for="@Model.RePassword" type="password" class="form-control" placeholder="تکرار رمز عبور " aria-describedby="repassword">
+                    </div>
+                    <span class="alert-danger" asp-validation-for="RePassword"></span>
+                    <hr />
+                    <div class="link">
+                        <a href=""> <i class="zmdi zmdi-assignment"></i> قوانین و مقررات سایت !</a>
+                        <a href=""> <i class="zmdi zmdi-account"></i> ورود به سایت </a>
+                    </div>
+                    <button class="btn btn-success btn-block img-rounded"> عضویت در سایت </button>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-warning btn-block img-rounded" data-dismiss="modal">بستن</button>
+                @*<button class="btn btn-success bt img-rounded"> عضویت در سایت </button>*@
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+
+    $(document).on(function (event) {
+
+        $('#exampleModal').on('show.bs.modal', function (event) {
+
+            var button = $(event.relatedTarget) // Button that triggered the modal
+            var recipient = button.data('whatever') // Extract info from data-* attributes
+            // If necessary, you could initiate an AJAX request here (and then do the updating in a callback).
+            // Update the modal's content. We'll use jQuery here, but you could use a data binding library or other methods instead.
+            var modal = $(this)
+            modal.find('.modal-title').text('عضویت در سایت')
+            modal.find('.modal-body input').val(recipient)
+        });
+    });
+
+</script>

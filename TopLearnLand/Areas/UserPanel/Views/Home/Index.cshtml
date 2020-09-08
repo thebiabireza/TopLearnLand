@@ -1,0 +1,99 @@
+﻿
+@using TopLearnLand_Core.Convertors
+@model TopLearnLand_Core.DTOs_ViewModels_.InformationUserViewModel
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_DefaultLayout.cshtml";
+}
+
+<style type="text/css">
+
+    .mizekar li:hover {
+        background-color: #f2f2f2 !important;
+        box-shadow: 0px 0px 3px rgba(0, 0, 0, 0.3);
+    }
+
+    .mizekar li a:hover {
+        margin-right: 10px
+    }
+
+    .activeli {
+        background-color: #f2f2f2 !important;
+        box-shadow: 0px 0px 3px rgba(0, 0, 0, 0.3);
+        
+    }
+
+    .activeli a {
+        color: green;
+        margin-right: 10px;
+    }
+
+    .boxshadow:hover {
+        box-shadow: 0px 0px 40px rgba(0, 0, 0, 0.5);
+    }
+
+    .boxshadow {
+        box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.3);
+    }
+
+    .margin {
+        margin-right: 6px;
+    }
+
+    .margin a:hover {
+        color: cornflowerblue;
+    }
+</style>
+
+<div class="container" style="height: 50px;">
+    <nav aria-label="breadcrumb">
+        <ul class="breadcrumb thumbnail img-rounded boxshadow">
+            <li class="breadcrumb-item margin"><a href="#">تاپ لرن</a></li>
+            <li class="breadcrumb-item margin active" aria-current="page"> پنل کاربری </li>
+        </ul>
+    </nav>
+</div>
+<hr />
+<main>
+    <div class="container">
+        <div class="user-account">
+            <div class="row">
+                <div class="col-md-3 col-sm-4 col-xs-12">
+                    <aside>
+                        <partial name="_SideBar" />
+                    </aside>
+                </div>
+                <div class="col-md-9 col-sm-8 col-xs-12">
+                    <section class="user-account-content boxshadow">
+                        <div>
+                            @if (ViewBag.IsSuccessLogin == true)
+                            {
+                                <div class="alert alert-success">
+                                    <p class="help-block">ورود شما باموفقیت انجام شد</p>
+                                </div>
+                            }
+                        </div>
+                        <br />
+                        <header>
+                            <h1 class="alert-info text-center" style="font-size: 24px"> داشبورد @Model.UserName </h1>
+                        </header>
+                        <div class="inner">
+                            <div class="account-information">
+                                <h3 class="alert alert-success"> اطلاعات کاربری @Model.UserName </h3>
+                                <ul>
+                                    <li> <i class="zmdi zmdi-account"></i> نام و نام خانوادگی : @Model.UserName </li>
+                                    <li> <i class="zmdi zmdi-assignment-account"></i> نام کاربری : @Model.Email </li>
+                                    <li> <i class="zmdi zmdi-email"></i> ایمیل : @Model.Email </li>
+                                    <li> <i class="zmdi zmdi-calendar-check"></i> تاریخ عضویت : @Model.RegisterDate.ToShamsiDate() </li>
+                                    <li> <i class="zmdi zmdi-smartphone-lock"></i> کیف پول من : @Model.Wallet.ToString("#,0") تومان</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+

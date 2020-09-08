@@ -1,0 +1,205 @@
+﻿
+@using TopLearnLand_Core.Services.InterFaces
+@model TopLearnLand_DataLayer.Entities.Order.Order
+
+@inject IUserService _userService;
+@{
+    ViewData["Title"] = "ShowOrder";
+    int totalSumOrder = ((Model.OrderDetails.Sum(od => od.Price * od.Count)));
+    int SumOrder = (Model.OrderSum);
+    string discountType = (string)ViewBag.type;
+    string code = (string)ViewBag.code ;
+}
+
+<style type="text/css">
+    .mizekar li:hover {
+        background-color: #f2f2f2 !important;
+        box-shadow: 0px 0px 3px rgba(0, 0, 0, 0.3);
+    }
+
+    .mizekar li a:hover {
+        margin-right: 7px
+    }
+
+    .boxshadow:hover {
+        box-shadow: 0px 0px 40px rgba(0, 0, 0, 0.5);
+    }
+
+    .boxshadow {
+        box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.3);
+    }
+
+    .boxshadowTabel {
+        box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.3);
+    }
+
+    .margin {
+        margin-right: 6px;
+    }
+
+        .margin a:hover {
+            color: cornflowerblue;
+        }
+
+    .wallet tr {
+        background-color: #f2f2f2;
+    }
+</style>
+
+<div class="container" style="height: 50px;">
+    <nav aria-label="breadcrumb">
+        <ul class="breadcrumb thumbnail img-rounded boxshadow">
+            <li class="breadcrumb-item margin"><a href="/">تاپ لرن</a></li>
+            <li class="breadcrumb-item margin" aria-current="page"> <a href="/UserPanel">پنل کاربری</a> </li>
+            <li class="breadcrumb-item margin active" aria-current="page"> سفارشهای @User.Identity.Name </li>
+        </ul>
+    </nav>
+</div>
+
+<main>
+    <div class="container">
+        <div class="user-account">
+            <div class="row">
+                <div class="col-md-3 col-sm-4 col-xs-12">
+                    <aside>
+                        <partial name="_SideBar" />
+                    </aside>
+                </div>
+                <div class="col-md-9 col-sm-8 col-xs-12">
+                    <section class="user-account-content boxshadow">
+                        <header><h1 class="alert alert-info text-center" style="font-size: 20px"> فاکتور | @User.Identity.Name </h1></header>
+                        <div class="inner form-layer">
+                            @if (ViewBag.finaly == true)
+                            {
+                                <div class="alert-success">سفارش شما باموفقیت انجام شد</div>
+                            }
+                            <hr />
+                            <table class="table table-bordered table-responsive table-hover wallet rounded boxshadowTabel">
+                                <tr>
+                                    <th>دوره</th>
+                                    <th>تعداد</th>
+                                    <th>قیمت هرمحصول</th>
+                                    <th>جمع هرمحصول</th>
+                                    <th>دستورات</th>
+                                </tr>
+                                @foreach (var detail in Model.OrderDetails)
+                                {
+                                    <tr class="table table-success">
+                                        <td class="text-success">
+                                            <a href="/ShowCourse/@detail.CourseId" target="_blank">@detail.Course.CourseTitle</a>
+                                        </td>
+                                        <td class="text text-warning">@detail.Count</td>
+                                        <td class="text text-success">@detail.Price.ToString("#,0") تومان</td>
+                                        <td class="text text-success">
+                                            @((detail.Count * detail.Price).ToString("#,0")) تومان
+                                        </td>
+                                        <td>
+                                            <a class="btn btn-sm btn-success boxshadow" target="_blank" href="/ShowCourse/@detail.CourseId">خرید همین محصول</a>
+                                            @if (detail.Order.IsFinaly)
+                                            {
+                                                <a class="btn btn-sm btn-danger boxshadow" disabled href="#"> حذف </a>
+                                            }
+                                            else
+                                            {
+                                                <a class="btn btn-sm btn-danger boxshadow" id="btnremove" href="/UserPanel/MyOrder/DeleteProduct/@detail.OrderDetailId?code=@code"> حذف </a>
+                                            }
+                                        </td>
+                                    </tr>
+
+                                }
+                                <tr class="table table-success">
+                                    <td colspan="2" class="text text-success">جمع کل اقلام</td>
+                                    <td class="text text-success">@((SumOrder).ToString("#,0"))</td>
+                                    @if (!Model.IsFinaly)
+                                    {
+                                        <form action="/UserPanel/MyOrder/UseDiscount" method="post" role="form">
+                                            <input type="hidden" name="orderId" value="@Model.OrderId" />
+                                            <td colspan="1">
+                                                <span>کد تخفیف</span>
+                                                <input type="text" style="display: inline-block" id="code"name="code" class="form-control" placeholder=" تخفیف...." />
+                                            </td>
+                                            <td>
+                                                <span></span>
+                                                <input type="submit" class="btn btn-block btn-primary rounded boxshadow" value="اعمال تخفیف" />
+                                                @if (discountType != "")
+                                                {
+                                                    switch (discountType)
+                                                    {
+                                                        case "Success":
+                                                            {
+                                                                <div class="alert-success">
+                                                                    <p class="text-muted">کدشما باموفقیت اعمال شد</p>
+                                                                </div>
+                                                                break;
+                                                            }
+                                                        case "Expired":
+                                                            {
+                                                                <div class="alert-warning">
+                                                                    <p class="text-muted">کدشما منقضی شده است</p>
+                                                                </div>
+                                                                break;
+                                                            }
+                                                        case "Finished":
+                                                            {
+                                                                <div class="alert-danger">
+                                                                    <p class="text-muted">تعداد استفاده ازکد بیش ازحد مجازاست</p>
+                                                                </div>
+                                                                break;
+                                                            }
+                                                        case "UserUsed":
+                                                            {
+                                                                <div class="alert-danger">
+                                                                    <p class="text-muted">این کدقبلا استفاده شده است</p>
+                                                                </div>
+                                                                break;
+                                                            }
+                                                        case "NotFound":
+                                                            {
+                                                                <div class="alert-danger">
+                                                                    <p class="text-muted">کدشما اعتبار ندارد</p>
+                                                                </div>
+                                                                break;
+                                                            }
+                                                    }
+                                                }
+                                            </td>
+                                        </form>
+                                    }
+                                </tr>
+                                @if (!Model.IsFinaly)
+                                {
+                                    <tr class="table table-success">
+                                        <td colspan="3">
+                                            <a href="/UserPanel/MyOrder/DeleteOrder/@Model.OrderId" class="btn btn-block btn-danger rounded boxshadow">حذف سفارش</a>
+                                        </td>
+                                        <td colspan="3">
+                                            @if (_userService.BalanceUserWallet(User.Identity.Name) <= totalSumOrder)
+                                            {
+                                                <a class="btn btn-block btn-success rounded boxshadow" disabled>تایید سفارش</a>
+                                                <p></p>
+                                                <p class="alert-danger rounded">
+                                                    جهت نهایی کردن سفارش لطفا کیف پول خودرا ازطیق <a href="/UserPanel/Wallet" class="badge badge-success">این لینک</a> شارژکنید
+                                                </p>
+                                            }
+                                            else
+                                            {
+                                                <a class="btn btn-block btn-success rounded boxshadow" href="/UserPanel/MyOrder/FinalyOrder/@Model.OrderId/@totalSumOrder">تایید سفارش</a>
+                                            }
+                                        </td>
+                                    </tr>
+                                }
+                            </table>
+                        </div>
+                    </section>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<script>
+    //$("#btnremove").ready(function () {
+    //    var code = $("#code").val();
+    //    $(this).href += code;
+    //});
+</script>

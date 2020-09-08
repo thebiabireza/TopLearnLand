@@ -1,0 +1,126 @@
+﻿
+@using TopLearnLand_Core.Convertors
+@using TopLearnLand_Core.DTOs_ViewModels_
+@model TopLearnLand_Core.DTOs_ViewModels_.ChargeWalletViewModel;
+@{
+    ViewData["Title"] = "Index";
+}
+
+@{
+    List<WalletViewModel> wallet = ViewData["WalletUser"] as List<WalletViewModel>;
+}
+
+<style type="text/css">
+    .mizekar li:hover {
+        background-color: #f2f2f2 !important;
+        box-shadow: 0px 0px 3px rgba(0, 0, 0, 0.3);
+    }
+
+    .mizekar li a:hover {
+        margin-right: 7px
+    }
+
+    .boxshadow:hover {
+        box-shadow: 0px 0px 40px rgba(0, 0, 0, 0.5);
+    }
+
+    .boxshadow {
+        box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.3);
+    }
+
+    .boxshadowTabel {
+        box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.3);
+    }
+
+    .margin {
+        margin-right: 6px;
+    }
+    .margin a:hover {
+        color: cornflowerblue;
+    }
+    .wallet tr {
+        background-color: #f2f2f2;
+    }
+</style>
+
+<div class="container" style="height: 50px;">
+    <nav aria-label="breadcrumb">
+        <ul class="breadcrumb thumbnail img-rounded boxshadow">
+            <li class="breadcrumb-item margin"><a href="/">تاپ لرن</a></li>
+            <li class="breadcrumb-item margin" aria-current="page"> <a href="/UserPanel">پنل کاربری</a> </li>
+            <li class="breadcrumb-item margin active" aria-current="page"> کیف پول @User.Identity.Name</li>
+        </ul>
+    </nav>
+</div>
+
+<main>
+    <div class="container">
+        <div class="user-account">
+            <div class="row">
+                <div class="col-md-3 col-sm-4 col-xs-12">
+                    <aside>
+                        <partial name="_SideBar" />
+                    </aside>
+                </div>
+                <div class="col-md-9 col-sm-8 col-xs-12">
+                    <section class="user-account-content boxshadow">
+                        <header><h1 class="alert alert-info text-center" style="font-size: 20px"> کیف پول | @User.Identity.Name </h1></header>
+                        <div class="inner form-layer">
+                            <form asp-action="Index" role="form" method="post">
+                                @*<input type="hidden" asp-for="IsPay"/>*@
+                                <div asp-validation-summary="All" class="field-validation-error alert-danger"></div>
+
+                                @if (ViewBag.Ammount == false)
+                                {
+                                    <div class="alert-danger text-center">مبلغ شما باید بیشتراز صفر باشد</div>
+                                }
+                                <hr/>
+                                <div class="row">
+                                    <div class="col-md-7 col-sm-8 col-xs-12">
+                                        <div class="input-group">
+                                            <span class="input-group-addon" id=""><i class="zmdi zmdi-balance-wallet"></i></span>
+                                            <input asp-for="Amount" type="number" class="form-control" placeholder="مبلغ شارژ به تومان" aria-describedby="username" style="background-image: url(&quot;data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAABHklEQVQ4EaVTO26DQBD1ohQWaS2lg9JybZ+AK7hNwx2oIoVf4UPQ0Lj1FdKktevIpel8AKNUkDcWMxpgSaIEaTVv3sx7uztiTdu2s/98DywOw3Dued4Who/M2aIx5lZV1aEsy0+qiwHELyi+Ytl0PQ69SxAxkWIA4RMRTdNsKE59juMcuZd6xIAFeZ6fGCdJ8kY4y7KAuTRNGd7jyEBXsdOPE3a0QGPsniOnnYMO67LgSQN9T41F2QGrQRRFCwyzoIF2qyBuKKbcOgPXdVeY9rMWgNsjf9ccYesJhk3f5dYT1HX9gR0LLQR30TnjkUEcx2uIuS4RnI+aj6sJR0AM8AaumPaM/rRehyWhXqbFAA9kh3/8/NvHxAYGAsZ/il8IalkCLBfNVAAAAABJRU5ErkJggg==&quot;); background-repeat: no-repeat; background-attachment: scroll; background-size: 16px 18px; background-position: left center; cursor: auto;">
+                                        </div>
+                                        <span class="alert-danger" asp-validation-for="Amount"></span>
+                                    </div>
+                                    <br/>
+                                    <div class="col-md-7 col-sm-8 col-xs-12">
+                                        <button class="btn btn-success"> شارژ حساب </button>
+                                    </div>
+                                </div>
+                            </form>
+                            <hr/>
+                            <table class="table table-bordered table-responsive table-hover wallet rounded boxshadowTabel">
+                                <tr>
+                                    <th>مبلغ</th>
+                                    <th>تاریخ</th>
+                                    <th>نوع تراکنش</th>
+                                    <th>توضیحات</th>
+                                </tr>
+                                @foreach (var item in wallet)
+                                {
+                                    <tr>
+                                        <td class="text-success">@item.Amount.ToString("#,0 تومان")</td>
+                                        <td>@item.DateCharge.ToShamsiDate()</td>
+                                        <td>
+                                            @if (@item.WalletTypeId == 1)
+                                            {
+                                                <p class="text-success">واریز</p>
+                                            }
+                                            else
+                                            {
+                                                <p class="text-danger">برداشت</p>
+                                            }
+                                        </td>
+                                        <td>@item.Description</td>
+                                    </tr>
+                                }
+                                
+                            </table>
+                        </div>
+                    </section>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>

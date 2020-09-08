@@ -1,0 +1,186 @@
+﻿@page
+@using TopLearnLand_Core.Convertors
+@using TopLearnLand_Core.Services.InterFaces
+@using TopLearnLand_DataLayer.Entities.User
+@model TopLearnLand.Pages.Admin.Roles.IndexModel
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Pages/Shared/_AdminAdvanceLayout.cshtml";
+}
+@inject IUserService _UserService;
+@{
+    var users = _UserService.GetUsers().Where(u => u.IsActive).OrderBy(o => o.RegisterDate);
+}
+
+<style type="text/css">
+
+    .boxshadow:hover {
+        box-shadow: 0px 0px 18px rgba(0, 0, 0, 0.5);
+    }
+
+    .boxshadow {
+        box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.3);
+    }
+</style>
+
+<div class="container">
+    <di class="row">
+        <!--Users List-->
+        <div class="col-sm-6 col-md-6">
+            <div class="card card-dark card-outline boxshadow">
+                <div class="card-header border-transparent">
+                    <h3 class="card-title badge badge-light">Latest Roles</h3>
+                    <!--SearchBox-->
+                    <!--/SearchBox-->
+                    <div class="card-tools">
+                        <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                            <i class="fas fa-minus"></i>
+                        </button>
+                        <button type="button" class="btn btn-tool" data-card-widget="remove">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                </div>
+                <!-- /.card-header -->
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table m-0">
+                            <thead>
+                                <tr>
+                                    <th>Role Title</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var role in Model.RoleList)
+                                {
+                                    <tr>
+                                        <td><span class="badge badge-light" style="font-size: 14px">@role.RoleTitle</span></td>
+                                        <td>
+                                            <a href="/Admin/Roles/DeleteRole/@role.RoleId" class="btn btn-sm btn-outline-danger"><i class="fas fa-user"></i>Delete Role</a>
+                                            <a href="/Admin/Roles/EditRole/@role.RoleId" class="btn btn-sm btn-outline-secondary"><i class="fas fa-user-edit"></i>Edit Role</a>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                    <!-- /.table-responsive -->
+                </div>
+                <!-- /.card-body -->
+                <div class="card-footer clearfix">
+                    <a asp-page="CreateRole" class="btn btn-sm btn-info float-right"><i class="fas fa-user"></i> Create New Role </a>
+                    @*<div class="dataTables_paginate paging_simple_numbers" id="example2_paginate">
+                            <ul class="pagination">
+                                <li class="paginate_button page-item previous @((Model.UsersForAdminPanelViewModels.CurrentPage - 1 <= Model.UsersForAdminPanelViewModels.PageCount ? "active" : "disabled"))" id="example2_previous">
+                                    <a href="/Admin/Users?pageId=@Model.UsersForAdminPanelViewModels.CurrentPage-1" aria-controls="example2" data-dt-idx="0" tabindex="0" class="page-link">Previous</a>
+                                </li>
+                                @for (int item = 1; item <= Model.UsersForAdminPanelViewModels.PageCount; item++)
+                                {
+                                    <li class="paginate_button page-item @((item == Model.UsersForAdminPanelViewModels.CurrentPage ? "active" : ""))">
+                                        <a href="/Admin/Users?pageId=@item" class="page-link">@item</a>
+                                    </li>
+                                }
+                                <li class="paginate_button page-item next  @((Model.UsersForAdminPanelViewModels.CurrentPage + 1 > Model.UsersForAdminPanelViewModels.PageCount ? "active" : ""))" id="example2_next">
+                                    <a href="/Admin/Users?pageId=@Model.UsersForAdminPanelViewModels.CurrentPage-2" class="page-link">Next</a>
+                                </li>
+                            </ul>
+                        </div>*@
+                </div>
+                <!-- /.card-footer -->
+            </div>
+        </div>
+        <div class="col-sm-6 col-md-6">
+            <!--Find-Role-->
+            <div class="card card-dark card-outline boxshadow">
+                <div class="card-header">
+                    <h3 class="card-title">Find Role</h3>
+                </div>
+                <div class="card-body">
+                    <form rol="form">
+                        <div class="col-sm-10 col-md-10">
+                            <div class="input-group mb-3">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text"><i class="fas fa-user"></i></span>
+                                </div>
+                                <input type="text" name="filterRoleTile" class="form-control" placeholder="Role Title...">
+                            </div>
+                        </div>
+                        <div class="row col-sm-10 col-md-10 clearfix">
+                            <div class="col-sm-6  col-md-6">
+                                <button type="submit" class="btn btn-sm btn-primary"> <i class="fas fa-user"></i> Find Role</button>
+                                <a href="/Admin/Roles" class="btn btn-sm btn-info"><i class="fa fa-recycle"></i> Refresh </a>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <!-- /.card-body -->
+            </div>
+            <!--/Find-User-->
+        </div>
+        <!--/Users List-->
+    </di>
+
+    <!-- UserProFile -->
+    <div class="card">
+        <div class="card-header card-dark card-outline">
+            <h3 class="card-title badge badge-secondary">کاربران فیلترشده براساس نقش ها</h3>
+
+            <div class="card-tools">
+                <ul class="pagination pagination-sm float-right">
+                    <li class="page-item"><a class="page-link" href="#">«</a></li>
+                    <li class="page-item"><a class="page-link" href="#">1</a></li>
+                    <li class="page-item"><a class="page-link" href="#">2</a></li>
+                    <li class="page-item"><a class="page-link" href="#">»</a></li>
+                </ul>
+            </div>
+        </div>
+        <!-- /.card-header -->
+        <div class="card-body p-0">
+            @foreach (var itemUser in users)
+            {
+                <div class="col-md-3" style="margin-left: 0px; margin-top: 12px; display: inline-block">
+                    <!-- Profile Image -->
+                    <div class="card card-dark card-outline boxshadow">
+                        <div class="card-body box-profile">
+                            <div class="text-center">
+                                <img class="profile-user-img img-fluid img-circle" src="/UserAvatar/@itemUser.UserAvatar" alt="User profile picture">
+                            </div>
+                            <h3 class="profile-username text-center">@itemUser.UserName</h3>
+
+                            <p class="text-muted text-center">UserRoles</p>
+
+                            <ul class="list-group list-group-unbordered mb-3">
+                                <li class="list-group-item">
+                                    <i class="fas fa-envelope"></i><a class="float-right" style="color:#2453ab">@itemUser.Email</a>
+                                </li>
+                                <li class="list-group-item">
+                                    <i class="far fa-calendar-alt"></i><a class="float-right">@itemUser.RegisterDate.ToShamsiDate()</a>
+                                </li>
+                                <li class="list-group-item">
+                                    <b>Status</b>
+                                    @if (itemUser.IsActive == true)
+                                    {
+                                        <a class="float-right badge badge-success" style="color:white">active</a>
+
+                                    }
+                                    else
+                                    {
+                                        <a class="float-right badge badge-danger" style="color:white">deActive</a>
+                                    }
+                                </li>
+                            </ul>
+
+                            <a href="#" class="btn btn-primary btn-block"><b>Follow</b></a>
+                        </div>
+                        <!-- /.card-body -->
+                    </div>
+                </div>
+            }
+        </div>
+        <!-- /.card-body -->
+    </div>
+
+    <!-- /UserProFile -->
+</div>
+

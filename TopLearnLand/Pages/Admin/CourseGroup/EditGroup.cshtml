@@ -1,0 +1,77 @@
+﻿@page "{groupId}"
+@model TopLearnLand.Pages.Admin.CourseGroup.EditGroupModel
+@{
+    ViewData["Title"] = "EditGroup";
+    Layout = "~/Pages/Shared/_AdminAdvanceLayout.cshtml";
+}
+
+<style type="text/css">
+
+    .boxshadow:hover {
+        box-shadow: 0px 0px 28px rgba(0, 0, 0, 0.5);
+    }
+
+    .boxshadow {
+        box-shadow: 0px 0px 25px rgba(0, 0, 0, 0.3);
+    }
+
+    .form_Add form {
+        margin-left: 10px;
+    }
+</style>
+
+<div class="container">
+    <h1>Edit Group</h1>
+</div>
+
+<div class="container">
+    <hr />
+    <div class="row">
+        <div class="col-md-12" style="display: inline-block">
+            <form role="form" method="post">
+                <input type="hidden" asp-for="CourseGroup.ParentId" />
+                <input type="hidden" asp-for="CourseGroup.CourseGroupId" />
+                <br />
+                <div class="col-md-12 col-sm-12" style="display: inline-block">
+                    <div class="card card-secondary card-outline boxshadow">
+                        <div class="card-header border-transparent">
+                            <h3 class="card-title">Edit Group</h3>
+                            <div class="card-tools">
+                                <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                                    <i class="fas fa-minus"></i>
+                                </button>
+                                <button type="button" class="btn btn-tool" data-card-widget="remove">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <hr />
+                        <!-- /.card-header -->
+                        <div class="card-body">
+                            <div class="tab-content form_Add">
+                                <div class="form-group row">
+                                    <label asp-for="CourseGroup.GroupTitle" class="col-sm-3 col-form-label"><i class="fas fa-user"></i> عنوان گروه</label>
+                                    <div class="col-sm-9">
+                                        <input id="DisCount_DisCountCode" type="text" asp-for="CourseGroup.GroupTitle" class="form-control" placeholder="  عنوان گروه...">
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <span class="alert-danger" asp-validation-for="CourseGroup.GroupTitle"></span>
+                                    </div>
+                                </div>
+                                <hr />
+                                <div class="form-group row">
+                                    <div class="offset-sm-3 col-sm-12">
+                                        <button type="submit" class="btn btn-outline-success boxshadow"> ویرایش گروه</button>
+                                    </div>
+                                </div>
+                                <!-- /.tab-pane -->
+                            </div>
+                        </div>
+                        <!-- /.card-body -->
+                    </div>
+                    <!-- /.nav-tabs-custom -->
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

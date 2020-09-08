@@ -1,0 +1,73 @@
+﻿
+@model TopLearnLand_Core.DTOs_ViewModels_.LoginViewModels
+@{
+    ViewData["Title"] = "ورود به سایت";
+}
+
+<nav aria-label="breadcrumb">
+    <ul class="breadcrumb">
+        <li class="breadcrumb-item"><a href="#">تاپ لرن</a></li>
+        <li class="breadcrumb-item active" aria-current="page">ورود به سایت</li>
+    </ul>
+</nav>
+
+<main class="client-page">
+    <div class="container-content">
+        @if (ViewBag.IsSuccessLogin == true)
+        {
+            <script type="text/javascript">
+                var delay = 3000;
+                document.setTimeout(function () {
+                    document.window.location = "https://localhost:44376/UserPanel?IsSuccessLogin=true";
+                }, delay);
+            </script>
+
+            <div class="alert alert-success">
+                <p class="help-block">ورود شما باموفقیت انجام شد</p>
+            </div>
+        }
+        <br />
+        <header><h2> ورود به سایت </h2></header>
+        <br />
+        @if (ViewBag.EditProfile == true)
+        {
+            <div class="alert alert-warning">
+                <p class="help-block">بدلیل ویرایش پروفایل‌، لطفا مجدد لاگین کنید</p>
+            </div>
+        }
+
+        <div class="form-layer">
+
+            <form asp-action="Login" method="post" role="form">
+
+                <div asp-validation-summary="All" class="validation-summary-errors alert-danger"></div>
+                <input type="hidden" asp-for="ReturnUrl" class="form-control" />
+                <hr />
+                <div class="input-group">
+                    <span class="input-group-addon" id="email-address"><i class="zmdi zmdi-email"></i></span>
+                    <input hidden="" asp-for="Email" type="text" class="form-control" placeholder="ایمیل" aria-describedby="email-address">
+                </div>
+                <span class="alert-danger" asp-validation-for="Email"></span>
+                <hr />
+                <div class="input-group">
+                    <span class="input-group-addon" id="password"><i class="zmdi zmdi-lock"></i></span>
+                    <input asp-for="Password" type="password" class="form-control" placeholder="رمز عبور " aria-describedby="password">
+                </div>
+                <span class="alert-danger" asp-validation-for="Password"></span>
+                <hr />
+                <div class="remember-me">
+                    <label><input type="checkbox" name="">  مرا بخاطر بسپار </label>
+                </div>
+
+                <div class="link">
+                    <a href="/ForgotPassWord"> <i class="zmdi zmdi-lock"></i> رمز عبور خود را فراموش کرده ام !</a>
+                    <a href="/Register"> <i class="zmdi zmdi-account"></i> عضویت در سایت </a>
+                </div>
+
+                <button class="btn btn-success"> ورود به سایت </button>
+
+            </form>
+        </div>
+
+    </div>
+</main>

@@ -1,0 +1,215 @@
+﻿@page
+@using TopLearnLand_DataLayer.Entities.User
+@model TopLearnLand.Pages.Admin.Users.CreateUserModel
+@{
+    ViewData["Title"] = "CreateUser";
+    Layout = "~/Pages/Shared/_AdminAdvanceLayout.cshtml";
+}
+
+@{
+    IList<Role> roles = ViewData["Roles"] as List<Role>;
+}
+
+<style type="text/css">
+
+    .boxshadow:hover {
+        box-shadow: 0px 0px 28px rgba(0, 0, 0, 0.5);
+    }
+
+    .boxshadow {
+        box-shadow: 0px 0px 25px rgba(0, 0, 0, 0.3);
+    }
+
+    .form_Add form {
+        margin-left: 10px;
+    }
+</style>
+
+<div class="container">
+    <h1>CreateUser</h1>
+</div>
+<div class="container-fluid">
+    <hr />
+    <div class="row">
+        <div class="col-md-12" style="display: inline-block">
+            <form role="form" method="post" enctype="multipart/form-data">
+                <br />
+                <div class="container">
+                    <div asp-validation-summary="All" class="field-validation-error small alert-danger"></div>
+                </div>
+                <!--UserAvatar-->
+                <div class="col-md-3 col-sm-3" style="display: inline-block; float: right">
+                    <div class="card card-widget widget-user boxshadow">
+                        <!-- Add the bg color to the header using any of the bg-* classes -->
+                        <div class="widget-user-header text-white" style="background: url('/AdminContent/AdminAdvance/dist/img/photo1.png') center center;">
+                            <h3 class="widget-user-username text-right">User Name</h3>
+                            <h5 class="widget-user-desc text-right">User Roles</h5>
+                        </div>
+                        <div class="widget-user-image">
+                            <img id="imgAvatar" class="img-circle" src="/AdminContent/AdminAdvance/dist/img/user3-128x128.jpg" alt="User Avatar">
+                        </div>
+                        <div class="card-footer">
+                            <div class="row">
+                                <div class="col-sm-4 border-right">
+                                    <div class="description-block">
+                                        <h5 class="description-header">3,200</h5>
+                                        <span class="description-text">SALES</span>
+                                    </div>
+                                    <!-- /.description-block -->
+                                </div>
+                                <!-- /.col -->
+                                <div class="col-sm-4 border-right">
+                                    <div class="description-block">
+                                        <h5 class="description-header">13,000</h5>
+                                        <span class="description-text">FOLLOWERS</span>
+                                    </div>
+                                    <!-- /.description-block -->
+                                </div>
+                                <!-- /.col -->
+                                <div class="col-sm-4">
+                                    <div class="description-block">
+                                        <h5 class="description-header">35</h5>
+                                        <span class="description-text">PRODUCTS</span>
+                                    </div>
+                                    <!-- /.description-block -->
+                                </div>
+                                <!-- /.col -->
+                            </div>
+                            <!-- /.row -->
+                        </div>
+                    </div>
+                    <div class="custom-file boxshadow" style="margin-top: 0px;">
+                        <input asp-for="CreateUser.UserAvatar" type="file" class="custom-file-input" id="customFile">
+                        <label class="custom-file-label" for="customFile">Choose Avatar</label>
+                    </div>
+                </div>
+                <!--/UserAvatar-->
+                <!--User Roles-->
+                <div class="col-md-3 col-sm-3" style="display: inline-block; float: right">
+                    <div class="card card-secondary card-outline boxshadow">
+                        <div class="card-header border-transparent">
+                            <h3 class="card-title">Add Roles</h3>
+                            <div class="card-tools">
+                                <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                                    <i class="fas fa-minus"></i>
+                                </button>
+                                <button type="button" class="btn btn-tool" data-card-widget="remove">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <hr />
+                        <!-- /.card-header -->
+                        <div class="card-body">
+                            <div class="tab-content form_Add">
+                                <div class="form-group clearfix">
+                                    @foreach (var role in roles)
+                                    {
+                                        <div class="checkbox-inline d-inline">
+                                            <input type="checkbox" name="SelectedRoles" value="@role.RoleId">
+                                            <label for="">@role.RoleTitle</label>
+                                        </div>
+                                    }
+                                </div>
+                                <hr />
+                                <div class="form-group clearfix">
+                                    <div class="checkbox-inline d-inline">
+                                        <input type="checkbox" name="IsActive" asp-for="CreateUser.IsActive">
+                                        <label for="">User Account IsActive?</label>
+                                    </div>
+                                </div>
+                                <!-- /.tab-pane -->
+                            </div>
+                        </div>
+                        <!-- /.card-body -->
+                    </div>
+                </div>
+                <!--User Roles-->
+                <div class="col-md-6 col-sm-6" style="display: inline-block">
+                    <div class="card card-secondary card-outline boxshadow">
+                        <div class="card-header border-transparent">
+                            <h3 class="card-title">Add User</h3>
+                            <div class="card-tools">
+                                <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                                    <i class="fas fa-minus"></i>
+                                </button>
+                                <button type="button" class="btn btn-tool" data-card-widget="remove">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <hr />
+                        <!-- /.card-header -->
+                        <div class="card-body">
+                            <div class="tab-content form_Add">
+                                <div class="form-group row">
+                                    <label asp-for="CreateUser.UserName" class="col-sm-3 col-form-label"><i class="fas fa-user"></i> UserName</label>
+                                    <div class="col-sm-9">
+                                        <input type="text" asp-for="CreateUser.UserName" class="form-control" id="inputName" placeholder="UserName...">
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <span class="alert-danger" asp-validation-for="CreateUser.UserName"></span>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label asp-for="CreateUser.Email" class="col-sm-3 col-form-label"><i class="fas fa-envelope"></i> Email </label>
+                                    <div class="col-sm-9">
+                                        <input type="email" asp-for="CreateUser.Email" class="form-control" id="inputEmail" placeholder="Email...">
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <span class="alert-danger" asp-validation-for="CreateUser.Email"></span>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label asp-for="CreateUser.Password" class="col-sm-3 col-form-label"><i class="fa fa-key"></i> Password</label>
+                                    <div class="col-sm-9">
+                                        <input type="text" asp-for="CreateUser.Password" class="form-control" id="inputSkills" placeholder="Password...">
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <div class="offset-sm-3 col-sm-10">
+                                        <div class="checkbox">
+                                            <label>
+                                                <input type="checkbox"> I agree to the <a href="#">terms and conditions</a>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <div class="offset-sm-3 col-sm-12">
+                                        <button type="submit" class="btn btn-danger"><i class="fas fa-user"></i> Add User</button>
+                                    </div>
+                                </div>
+                                <!-- /.tab-pane -->
+                            </div>
+                        </div>
+                        <!-- /.card-body -->
+                    </div>
+                    <!-- /.nav-tabs-custom -->
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts
+{
+    <script type="text/javascript">
+
+        function readURL(input) {
+            if (input.files && input.files[0]) {
+                var reader = new FileReader();
+
+                reader.onload = function (e) {
+                    $('#imgAvatar').attr('src', e.target.result);
+                }
+
+                reader.readAsDataURL(input.files[0]); // convert to base64 string
+            }
+        }
+
+        $("#customFile").change(function () {
+            readURL(this);
+        });
+    </script>
+}

@@ -1,0 +1,41 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Migrations\20200512100655_mig_userCourse.cs" />
+    <Compile Remove="Migrations\20200512100655_mig_userCourse.Designer.cs" />
+    <Compile Remove="Migrations\20200512100858_mig_userCourse.cs" />
+    <Compile Remove="Migrations\20200512100858_mig_userCourse.Designer.cs" />
+    <Compile Remove="Migrations\20200512105927_Mig_UserCourse.cs" />
+    <Compile Remove="Migrations\20200512105927_Mig_UserCourse.Designer.cs" />
+    <Compile Remove="Migrations\20200513153953_mig_usefcount.cs" />
+    <Compile Remove="Migrations\20200513153953_mig_usefcount.Designer.cs" />
+    <Compile Remove="Migrations\20200515094124_mig_createDate.cs" />
+    <Compile Remove="Migrations\20200515094124_mig_createDate.Designer.cs" />
+    <Compile Remove="Migrations\20200515095019_mig_createDate.cs" />
+    <Compile Remove="Migrations\20200515095019_mig_createDate.Designer.cs" />
+    <Compile Remove="Migrations\20200515114613_migcomment.cs" />
+    <Compile Remove="Migrations\20200515114613_migcomment.Designer.cs" />
+    <Compile Remove="Migrations\20200515115037_m_comment.cs" />
+    <Compile Remove="Migrations\20200515115037_m_comment.Designer.cs" />
+    <Compile Remove="Migrations\20200515115606_migComments.cs" />
+    <Compile Remove="Migrations\20200515115606_migComments.Designer.cs" />
+    <Compile Remove="Migrations\20200515120735_migcommentdate.cs" />
+    <Compile Remove="Migrations\20200515120735_migcommentdate.Designer.cs" />
+    <Compile Remove="Migrations\20200515121009_mig_courseComment.cs" />
+    <Compile Remove="Migrations\20200515121009_mig_courseComment.Designer.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="3.1.3" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="3.1.3" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="3.1.3">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,159 @@
+﻿@page "{courseId}"
+@model TopLearnLand.Pages.Admin.Course.CreateEpisodeModel
+@{
+    ViewData["Title"] = "CreateEpisode";
+    Layout = "~/Pages/Shared/_AdminAdvanceLayout.cshtml";
+}
+
+<style type="text/css">
+
+    .boxshadow:hover {
+        box-shadow: 0px 0px 18px rgba(0, 0, 0, 0.5);
+    }
+
+    .boxshadow {
+        box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.3);
+    }
+</style>
+
+<div class="container">
+    <h1>CreateEpisode</h1>
+</div>
+
+<div class="container">
+    <div class="row">
+        <div class="card boxshadow col-sm-6 col-md-6">
+            <div class="card-header card-dark card-outline">
+                <h3 class="card-title badge badge-secondary">Users Profile</h3>
+
+                <div class="card-tools">
+                    <ul class="pagination pagination-sm float-right">
+                        <li class="page-item"><a class="page-link" href="#">«</a></li>
+                        <li class="page-item"><a class="page-link" href="#">1</a></li>
+                        <li class="page-item"><a class="page-link" href="#">2</a></li>
+                        <li class="page-item"><a class="page-link" href="#">»</a></li>
+                    </ul>
+                </div>
+            </div>
+            <!-- /.card-header -->
+            <div class="card-body p-0">
+                <form method="post" role="form" enctype="multipart/form-data">
+                    <input type="hidden" asp-for="CourseEpisode.CourseId" />
+                    <br />
+                    <div class="form-row container">
+                        <div class="col-sm-12 col-md-12">
+                            <div class="form-row container">
+                                <div class="form-group col-md-6">
+                                    <label>Title</label>
+                                    <input type="text" asp-for="CourseEpisode.CourseEpisodeTitle" class="form-control boxshadow" placeholder="Title..." />
+                                </div>
+                                <div class="form-group col-md-6">
+                                    <label>Episode Time</label>
+                                    <input asp-for="CourseEpisode.EpisodeTimeSpan" class="form-control boxshadow" />
+                                </div>
+                            </div>
+                            <div class="form-row container">
+                                <div class="form-group col-md-9">
+                                    <div class="custom-file boxshadow" style="margin-top: 0px;">
+                                        <input type="file" asp-for="CourseEpisode.CourseEpisodeFile" class="custom-file-input" name="episodeFile" id="customFile">
+                                        <label class="custom-file-label" for="customFile">Course Episode</label>
+                                        @if (ViewData["IsExistFile"] != null)
+                                        {
+                                            <div class="alert-danger">
+                                                نام فایل تکراریست لطفا تغییر دهید
+                                            </div>
+                                        }
+                                    </div>
+                                </div>
+                                <div class="icheck-primary d-inline form-group col-md-3">
+                                    <input type="checkbox" asp-for="CourseEpisode.EpisodeIsFree" id="checkboxPrimary1">
+                                    <label class="badge badge-warning" for="checkboxPrimary1">Is Free This Episode?</label>
+                                </div>
+                            </div>
+                            <hr />
+                            <div class="form-row container">
+                                <div class="col-sm-6 col-md-6">
+                                    <input type="submit" value="Create Episode" class="btn btn-block btn-outline-success boxshadow" />
+                                </div>
+                            </div>
+                            <br/>
+                            <div></div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <!-- /.card-body -->
+        </div>
+    </div>
+</div>
+
+
+
+
+@section Scripts
+{
+    <script type="text/javascript">
+
+        $("#Course_GroupId").change(function () {
+            $("#Course_SubGroup").empty();
+            $.getJSON("/home/GetSubGroups/" + $("#Course_GroupId :selected").val(),
+                function (data) {
+                    $.each(data,
+                        function () {
+                            $("#Course_SubGroup").append('<option value=' + this.value + '>' + this.text + '</option>');
+                        });
+                });
+        });
+
+        //$('#Course_GroupId').change(function () {
+        //    $("#Course_Subgroup").empty();
+        //    $.ajax({
+        //        url: "/Home/GetSubGroups/" + $('#Course_GroupId:selected').val(),
+        //        success: function (data) {
+        //            $.each(data, function () {
+        //                $('#Course_SubGroup').append('<option value=' + this.value + '>' + this.text + '</option>');
+        //            });
+        //        }
+        //    });
+        //});
+
+
+        function readURL(input) {
+            if (input.files && input.files[0]) {
+                var reader = new FileReader();
+
+                reader.onload = function (e) {
+                    $('#imgCourse').attr('src', e.target.result);
+                }
+
+                reader.readAsDataURL(input.files[0]); // convert to base64 string
+            }
+        }
+
+        $("#CourseImageFile").change(function () {
+            readURL(this);
+        });
+
+        //$("#EditUserForm").submit(function (event) {
+        //    event.preventDefault();
+        //    var form = $(this);
+        //    form.find(".result").html("").fadeIn();
+        //    $.ajax(
+        //        {
+        //            type: form.attr('method'),
+        //            url: form.attr('action'),
+        //            data: form.serialize()
+        //        }), function (response) {
+        //            form.find(".result").html(response).delay(3000).fadeOut();
+        //        };
+        //});
+    </script>
+    <script src="https://cdn.ckeditor.com/4.9.2/standard/ckeditor.js"></script>
+    <script>
+
+        CKEDITOR.replace('Course_CourseDescription',
+            {
+                customConfig: '/js/Config.js'
+            });
+    </script>
+}

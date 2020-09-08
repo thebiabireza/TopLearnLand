@@ -1,0 +1,22 @@
+﻿
+@model TopLearnLand_Core.DTOs_ViewModels_.Courses.ShowCourseListItemViewModel
+@{
+    TimeSpan totalEpisodeTime = new TimeSpan(Model.CourseEpisode.Sum(e => e.EpisodeTimeSpan.Ticks));
+}
+<!-- col -->
+<div class="col-lg-3 col-md-4 col-sm-6 col-xs-12 term-col">
+    <article>
+        <a href="/ShowCourse/@Model.CourseId" class="img-layer"><img src="/Courses/Images/@Model.CourseImageName"></a>
+        <h2><a href="/ShowCourse/@Model.CourseId"> @Model.CourseTltle </a></h2>
+        @if (Model.CoursePrice == 0)
+        {
+            <span> رایگان </span>
+        }
+        else
+        {
+            <span> @Model.CoursePrice.ToString("#,0") تومان </span>
+        }
+    <i>@totalEpisodeTime</i>
+    </article>
+</div>
+<!-- /col -->

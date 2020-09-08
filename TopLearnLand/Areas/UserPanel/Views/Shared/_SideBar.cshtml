@@ -1,0 +1,40 @@
+﻿@using System.Security.Claims
+@using TopLearnLand_Core.Convertors
+@using TopLearnLand_Core.DTOs_ViewModels_
+@using TopLearnLand_Core.Services.InterFaces
+
+@inject IUserService _userService;
+@{
+    SideBarUserPanelViewModel sideBarUserPanel = _userService.GetSideBarUserPanelData(User.Identity.Name);
+    InformationUserViewModel userInformation = _userService.GetUserInformation(User.Identity.Name);
+}
+
+<div class="avatar-layer boxshadow">
+    <div class="img-layer">
+        <a href="/UserPanel/EditProfile" class="change-image"><i class="zmdi zmdi-edit"></i></a>
+        <img src="/UserAvatar/@sideBarUserPanel.ImageName">
+    </div>
+    <div class="detail">
+        <span class="text-primary" style="font-size: 18px"> @sideBarUserPanel.UserName </span>
+        <span class="alert-success text-center small"> عضویت : @sideBarUserPanel.RegisterDate.ToShamsiDate() </span>
+    </div>
+</div>
+
+<section class="boxshadow">
+    <header><h3 class="text-center text-primary" style="font-size: 20px"> میزکارمن </h3></header>
+    <div class="inner">
+        <ul class="mizekar">
+            <li class="activeli"><a style="color: #008000" href="/UserPanel"> مشاهده حساب کابری </a></li>
+            <li><a href="/UserPanel/EditProfile"> ویرایش حساب کابری </a></li>
+            @if (userInformation.userRoles.Any(role=>role == "Admin"))
+            {
+                <li><a href="/Admin"> ورورد به پنل ادمین </a></li>
+            }
+            <li><a href="/UserPanel/ChangePassWord"> تغییر رمز عبور </a></li>
+            <li><a href="/UserPanel/Wallet"> کیف‌ پول ‌شما </a></li>
+            <li><a href="/UserPanel/MyOrder"> فاکتورهای من </a></li>
+            <li><a href=""> تنظیمات حساب کاربری </a></li>
+            <li><a href="/Logout"> خروج از حساب کاربری </a></li>
+        </ul>
+    </div>
+</section>

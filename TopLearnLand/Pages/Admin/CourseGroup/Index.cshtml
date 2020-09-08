@@ -1,0 +1,128 @@
+﻿@page "{handler?}"
+@model TopLearnLand.Pages.Admin.CourseGroup.IndexModel
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Pages/Shared/_AdminAdvanceLayout.cshtml";
+}
+
+<style type="text/css">
+
+    .boxshadow:hover {
+        box-shadow: 0px 0px 18px rgba(0, 0, 0, 0.5);
+    }
+
+    .boxshadow {
+        box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.3);
+    }
+</style>
+
+<div class="container">
+    <a asp-page="CreateGroup" class="btn btn-outline-success boxshadow"><i class="fas fa-user"></i>Create group</a>
+    <hr />
+    <!--Users List-->
+    <div class="card card-dark card-outline boxshadow">
+        <div class="card-header border-transparent">
+            <h3 class="card-title badge badge-light">لیست گروه ها</h3>
+            <div id="alertCode" class="alert-success" style="display: none">
+                <p>خذف باموفقیت انجام شد</p>
+            </div>
+            <div class="card-tools">
+                <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                    <i class="fas fa-minus"></i>
+                </button>
+                <button type="button" class="btn btn-tool" data-card-widget="remove">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+        </div>
+        <!-- /.card-header -->
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table m-0">
+                    <thead>
+                        <tr>
+                            <th>عنوان گروه</th>
+                            <th>زیر گروه</th>
+                            <th>دستورات</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var courseGroup in Model.CourseGroups.Where(g => g.ParentId == null))
+                        {
+                            <tr>
+                                <td><span class="badge badge-success" style="font-size: 14px">@courseGroup.GroupTitle</span></td>
+                                <td>
+                                    @if (courseGroup.CourseGroups.Any())
+                                    {
+                                        <ul>
+                                            @foreach (var subGroup in courseGroup.CourseGroups)
+                                            {
+                                                <li>
+                                                    <span class="col-sm-12 col-md-12">
+                                                        <a href="/Admin/CourseGroup/EditGroup/@subGroup.CourseGroupId" class="btn btn-sm btn-outline-warning boxshadow"><i class="fas fa-user-edit"></i> Edit</a>
+                                                    </span>|
+                                                    <span class="col-sm-12 col-md-12">@subGroup.GroupTitle</span>
+                                                </li>
+                                            }
+                                        </ul>
+                                    }
+                                </td>
+                                <td>
+                                    <a href="/Admin/CourseGroup/EditGroup/@courseGroup.CourseGroupId" class="btn btn-sm btn-outline-warning boxshadow"><i class="fas fa-user-edit"></i> Edit</a>
+                                    <form id="deleteGroup" role="form" method="post">
+                                        <input type="hidden" id="groupId" name="groupId" value="@courseGroup.CourseGroupId" />
+                                        <input type="submit" class="btn btn-sm btn-outline-danger boxshadow" value=" Delete" />
+                                    </form>
+                                    <a href="/Admin/CourseGroup/CreateGroup/@courseGroup.CourseGroupId" class="btn btn-sm btn-outline-secondary boxshadow"><i class="fas fa-user-edit"></i> Sub Group</a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+            <!-- /.table-responsive -->
+        </div>
+        <!-- /.card-body -->
+        <div class="card-footer clearfix">
+            <a asp-page="CreateGroup" class="btn btn-outline-success boxshadow"><i class="fas fa-user"></i>Create group</a>
+            @*<div class="dataTables_paginate paging_simple_numbers" id="example2_paginate">
+                    <ul class="pagination">
+                        <li class="paginate_button page-item previous @((Model.UsersForAdminPanelViewModels.CurrentPage - 1 <= Model.UsersForAdminPanelViewModels.PageCount ? "active" : "disabled"))" id="example2_previous">
+                            <a href="/Admin/Users?pageId=@Model.UsersForAdminPanelViewModels.CurrentPage-1" aria-controls="example2" data-dt-idx="0" tabindex="0" class="page-link">Previous</a>
+                        </li>
+                        @for (int item = 1; item <= Model.UsersForAdminPanelViewModels.PageCount; item++)
+                        {
+                            <li class="paginate_button page-item @((item == Model.UsersForAdminPanelViewModels.CurrentPage ? "active" : ""))">
+                                <a href="/Admin/Users?pageId=@item" class="page-link">@item</a>
+                            </li>
+                        }
+                        <li class="paginate_button page-item next  @((Model.UsersForAdminPanelViewModels.CurrentPage + 1 > Model.UsersForAdminPanelViewModels.PageCount ? "active" : ""))" id="example2_next">
+                            <a href="/Admin/Users?pageId=@Model.UsersForAdminPanelViewModels.CurrentPage-2" class="page-link">Next</a>
+                        </li>
+                    </ul>
+                </div>*@
+        </div>
+        <!-- /.card-footer -->
+    </div>
+</div>
+
+
+@section Scripts
+{
+    <script>
+        $("#deleteGroup").submit(function (event) {
+            event.preventDefault();
+            $.ajax(
+                {
+                    type: "post",
+                    url: "/Admin/CourseGroup/DeleteGroup/" + $("#groupId").val(),
+                    data: form.serialize()
+                }), function (response) {
+                    if (response === 'True') {
+                        $("#alertCode").slideDown().delay(3000).slideUp();
+                    }
+                };
+        });
+    </script>
+
+}

@@ -1,0 +1,165 @@
+﻿@page "{handler?}"
+@model TopLearnLand.Pages.Admin.Discount.CreateDiscountModel
+@{
+    ViewData["Title"] = "CreateDiscount";
+    Layout = "~/Pages/Shared/_AdminAdvanceLayout.cshtml";
+}
+
+<style type="text/css">
+
+    .boxshadow:hover {
+        box-shadow: 0px 0px 28px rgba(0, 0, 0, 0.5);
+    }
+
+    .boxshadow {
+        box-shadow: 0px 0px 25px rgba(0, 0, 0, 0.3);
+    }
+
+    .form_Add form {
+        margin-left: 10px;
+    }
+</style>
+
+<div class="container">
+    <h1>افزودن تخفیف</h1>
+</div>
+
+<div class="container-fluid">
+    <hr />
+    <div class="row">
+        <div class="col-md-12" style="display: inline-block">
+            <form role="form" method="post" enctype="multipart/form-data">
+                <br />
+                <div class="container">
+                    <div asp-validation-summary="All" class="field-validation-error small alert-danger"></div>
+                </div>
+                <!--Calculate-->
+                <div class="col-md-4 col-sm-4" style="display: inline-block; float: right">
+                    <div class="card card-secondary card-outline boxshadow">
+                        <div class="card-header border-transparent">
+                            <h3 class="card-title">Add Calculate</h3>
+                            <div class="card-tools">
+                                <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                                    <i class="fas fa-minus"></i>
+                                </button>
+                                <button type="button" class="btn btn-tool" data-card-widget="remove">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <hr />
+                        <!-- /.card-header -->
+                        <div class="card-body">
+                            <div class="tab-content form_Add">
+                                <div class="form-group row">
+                                    <label class="col-sm-3 col-form-label"><i class="fa fa-calendar"></i> ازتاریخ</label>
+                                    <div class="col-sm-9">
+                                        <input id="fDate" name="fDate">
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label class="col-sm-3 col-form-label"><i class="fa fa-calendar"></i> تا تاریخ</label>
+                                    <div class="col-sm-9">
+                                        <input id="toDate" name="toDate">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- /.card-body -->
+                    </div>
+                </div>
+                <!--Calculate-->
+                <div class="col-md-8 col-sm-8" style="display: inline-block">
+                    <div class="card card-secondary card-outline boxshadow">
+                        <div class="card-header border-transparent">
+                            <h3 class="card-title">Add Discount</h3>
+                            <div class="card-tools">
+                                <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                                    <i class="fas fa-minus"></i>
+                                </button>
+                                <button type="button" class="btn btn-tool" data-card-widget="remove">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <hr />
+                        <!-- /.card-header -->
+                        <div class="card-body">
+                            <div class="tab-content form_Add">
+                                <div class="form-group row">
+                                    <label asp-for="DisCount.DisCountCode" class="col-sm-3 col-form-label"><i class="fas fa-user"></i> کد تخفیف</label>
+                                    <div class="col-sm-9">
+                                        <input id="DisCount_DisCountCode" type="text" asp-for="DisCount.DisCountCode" class="form-control" placeholder="  کد تخفیف...">
+                                        <div id="alertCode" class="alert-danger" style="display: none">
+                                            <p>کد وارد شده تکراری میباشد</p>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-3">
+                                        @*<span class="alert-danger" asp-validation-for="DisCount.DisCountCode"></span>*@
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label asp-for="DisCount.Percent" class="col-sm-3 col-form-label"><i class="fas fa-envelope"></i> درصد تخفیف </label>
+                                    <div class="col-sm-9">
+                                        <input type="text" asp-for="DisCount.Percent" class="form-control" placeholder="  درصد تخفیف ...">
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <span class="alert-danger" asp-validation-for="DisCount.Percent"></span>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label asp-for="DisCount.UsableCount" class="col-sm-3 col-form-label"><i class=""></i> تعداد استفاده</label>
+                                    <div class="col-sm-9">
+                                        <input type="text" asp-for="DisCount.UsableCount" class="form-control" placeholder=" تعداد استفاده...">
+                                    </div>
+                                </div>
+                                <hr />
+                                <div class="form-group row">
+                                    <div class="offset-sm-3 col-sm-12">
+                                        <button type="submit" class="btn btn-success boxshadow"><i class="fas fa-user"></i> افزودن تخفیف</button>
+                                    </div>
+                                </div>
+                                <!-- /.tab-pane -->
+                            </div>
+                        </div>
+                        <!-- /.card-body -->
+                    </div>
+                    <!-- /.nav-tabs-custom -->
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts
+{
+    <script>
+        $("#DisCount_DisCountCode").blur(function () {
+
+            $.ajax({
+                type: "get",
+                url: "/Admin/Discount/CreateDiscount/CheckCode?code=" + $("#DisCount_DisCountCode").val()
+            }).done(function (res) {
+                if (res === 'True') {
+                    $("#alertCode").slideDown();
+                }
+                else {
+                    $("#alertCode").slideUp();
+                }
+            });
+        });
+    </script>
+
+    <link href="http://cdn.kendostatic.com/2013.2.918/styles/kendo.common.min.css" rel="stylesheet" />
+    <link href="http://cdn.kendostatic.com/2013.2.918/styles/kendo.default.min.css" rel="stylesheet" />
+    <script src="/js/kendo.all.min.js"></script>
+
+    <script>
+        // create DatePicker from input HTML element
+        $("#fDate").kendoDatePicker();
+        $("#toDate").kendoDatePicker();
+    </script>
+    
+    
+
+}

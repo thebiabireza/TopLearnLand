@@ -1,0 +1,130 @@
+﻿@page
+@using TopLearnLand_DataLayer.Entities.Permissions
+@model TopLearnLand.Pages.Admin.Roles.CreateRoleModel
+@{
+    ViewData["Title"] = "CreateRole";
+    Layout = "~/Pages/Shared/_AdminAdvanceLayout.cshtml";
+    List<Permission> permissions = ViewData["Permissions"] as List<Permission>;
+}
+
+<style type="text/css">
+
+    .boxshadow:hover {
+        box-shadow: 0px 0px 28px rgba(0, 0, 0, 0.5);
+    }
+
+    .boxshadow {
+        box-shadow: 0px 0px 25px rgba(0, 0, 0, 0.3);
+    }
+
+    .form_Add form {
+        margin-left: 10px;
+    }
+</style>
+
+<div class="container">
+    <h1>CreateRole</h1>
+</div>
+<div class="container-fluid">
+    <hr />
+    <div class="row">
+        <div class="col-sm-12 col-md-12" style="display: inline-block">
+            <form role="form" method="post">
+                <br />
+                <div class="container">
+                    <div asp-validation-summary="All" class="field-validation-error small alert-danger"></div>
+                </div>
+                <div class="col-md-4 col-sm-4" style="display: inline-block">
+                    <div class="card card-secondary card-outline boxshadow">
+                        <div class="card-header border-transparent">
+                            <h3 class="card-title">Add Role</h3>
+                            <div class="card-tools">
+                                <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                                    <i class="fas fa-minus"></i>
+                                </button>
+                                <button type="button" class="btn btn-tool" data-card-widget="remove">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <hr />
+                        <!-- /.card-header -->
+                        <div class="card-body">
+                            <div class="tab-content form_Add">
+                                <div class="form-group row">
+                                    <label asp-for="Role.RoleTitle" class="col-sm-3 col-form-label"><i class="fas fa-critical-role"></i> Role Title</label>
+                                    <div class="col-sm-9">
+                                        <input type="text" asp-for="Role.RoleTitle" class="form-control" id="inputName" placeholder="UserName...">
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <div class="offset-sm-3 col-sm-12">
+                                        <button type="submit" class="btn btn-danger"><i class="fas fa-user"></i> Add Role</button>
+                                    </div>
+                                </div>
+                                <!-- /.tab-pane -->
+                            </div>
+                        </div>
+                        <!-- /.card-body -->
+
+                    </div>
+                    <!-- /.nav-tabs-custom -->
+                </div>
+                <div class="clearfix col-md-8 col-sm-8" style="display: inline-block; float: right">
+                    <div class="card card-secondary card-outline boxshadow">
+                        <div class="card-header border-transparent">
+                            <h3 class="card-title">دسترسی ها</h3>
+                            <div class="card-tools">
+                                <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                                    <i class="fas fa-minus"></i>
+                                </button>
+                                <button type="button" class="btn btn-tool" data-card-widget="remove">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <hr />
+                        <!-- /.card-header -->
+                        <div class="card-body">
+                            <div class="tab-content form_Add">
+                                <ul>
+                                    @foreach (var permission in permissions.Where(p => p.PermissionParentId == null))
+                                    {
+                                        <li>
+                                            <input type="checkbox" name="SelectedPermission" value="@permission.PermissionId" />
+                                            <label>@permission.PermissionTitle</label>
+                                            @if (permissions.Any(p => p.PermissionParentId == permission.PermissionParentId))
+                                            {
+                                                <ul>
+                                                    @foreach (var subPermission in permissions.Where(p => p.PermissionParentId == permission.PermissionId))
+                                                    {
+                                                        <input type="checkbox" name="SelectedPermission" value="@subPermission.PermissionId" />
+                                                        <label>@subPermission.PermissionTitle</label>
+                                                        @if (permissions.Any(p=>p.PermissionParentId == subPermission.PermissionParentId))
+                                                        {
+                                                            <ul>
+                                                                @foreach (var subPermission2 in permissions.Where(p=>p.PermissionParentId == subPermission.PermissionId))
+                                                                {
+                                                                    <input type="checkbox" name="SelectedPermission" value="@subPermission2.PermissionId" />
+                                                                    <label>@subPermission2.PermissionTitle</label>
+                                                                }
+                                                            </ul>
+                                                        }
+                                                    }
+                                                </ul>
+                                            }
+                                        </li>
+                                    }
+                                </ul>
+                                <!-- /.tab-pane -->
+                            </div>
+                        </div>
+                        <!-- /.card-body -->
+                    </div>
+                    <!-- /.nav-tabs-custom -->
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+

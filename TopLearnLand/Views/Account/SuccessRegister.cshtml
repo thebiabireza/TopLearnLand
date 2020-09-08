@@ -1,0 +1,21 @@
+﻿
+@model TopLearnLand_DataLayer.Entities.User.User
+@{
+    ViewData["Title"] = "SuccessRegister";
+}
+
+<nav aria-label="breadcrumb">
+    <ul class="breadcrumb">
+        <li class="breadcrumb-item"><a href="#">تاپ لرن</a></li>
+        <li class="breadcrumb-item active" aria-current="page">پایان ثبت نام</li>
+    </ul>
+</nav>
+
+<div class="container">
+    <div class="alert alert-success" style="box-shadow:1px -2px 5px 5px rgba(0,0,0,0.5)">
+        <h1 class="text-center">@Model.UserName عزیز!</h1>
+        <hr />
+        <p class="text-center">ثبت نام شما انجام شد. ایمیلی حاوی لینک فالسازی به ایمیل شما @Model.Email  ارسال گردید</p>
+        <p class="text-center">جهت ادامه ثبت نام وارد ایمیل خود شوید و روی لینک فعالسازی کلیک کنید</p>
+    </div>
+</div>
