@@ -44,7 +44,7 @@ namespace TopLearnLand_Core.Services
 
         public int GetOrderDetailCountByOrderId(int orderId)
         {
-            return _DBContext.OrderDetails.Where(od => od.OrderId == orderId).Count();
+            return _DBContext.OrderDetails.Count(od => od.OrderId == orderId);
         }
 
         public Order GetOrderForUserPanel(string userName, int orderId)
@@ -136,6 +136,7 @@ namespace TopLearnLand_Core.Services
             int percent = 0;
             int detailPrice = deleteOrderDetail.Count * deleteOrderDetail.Price;
             int detailPercent = 0;
+
             if (!string.IsNullOrEmpty(code))
             {
                 percent = GetPercentByDiscountCode(code);
@@ -158,7 +159,6 @@ namespace TopLearnLand_Core.Services
 
             #endregion
 
-
             #region Remove Order If not Exist orderdetails
 
             if (GetOrderDetailCountByOrderId(orderId) <= 0)
@@ -168,6 +168,7 @@ namespace TopLearnLand_Core.Services
             }
 
             #endregion
+
             return orderId;
         }
 

@@ -20,7 +20,14 @@ namespace TopLearnLand
             Host.CreateDefaultBuilder(args)
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
-                    webBuilder.UseStartup<Startup>();
+                    webBuilder.UseStartup<Startup>()
+                        .UseWebRoot("")
+                        .ConfigureLogging(config =>
+                        {
+                            config.ClearProviders();
+                            config.AddConsole();
+                            /*config.AddDebug();*/
+                        });
                 });
     }
 }

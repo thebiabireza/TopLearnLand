@@ -487,6 +487,12 @@ namespace TopLearnLand_Core.Services
             UpdateUser(user);
         }
 
+        public bool IsUserInCourse(string userName, int courseId)
+        {
+            int userId = GetUserIdByUserName(userName);
+            return _DBcontext.UserCourses.Any(uc => uc.CourseId == courseId && uc.UserId == userId);
+        }
+
         #endregion
     }
 }

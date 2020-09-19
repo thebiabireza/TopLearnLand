@@ -54,6 +54,7 @@ namespace TopLearnLand.Areas.UserPanel.Controllers
             HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
 
             #endregion
+
             return Redirect("/Login?EditProfile=true");
         }
 

@@ -33,6 +33,8 @@ namespace TopLearnLand_Core.Services.InterFaces
         //void RecoveryUser(List<int> usersId);
         void SaveUserAvatar(string avatarName, IFormFile userAvatar);
 
+        public bool IsUserInCourse(string userName, int courseId);
+
 
         #region User Panel Services
 

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using TopLearnLand_Core.DTOs_ViewModels_.DisCount;
 using TopLearnLand_Core.Services.InterFaces;
@@ -15,11 +16,13 @@ namespace TopLearnLand.Areas.UserPanel.Controllers
     {
         private IOrderService _orderService;
         private ICourseService _courseService;
+        private IWebHostEnvironment _environment;
 
-        public MyOrderController(IOrderService orderService, ICourseService courseService)
+        public MyOrderController(IOrderService orderService, ICourseService courseService, IWebHostEnvironment environment)
         {
             _orderService = orderService;
             _courseService = courseService;
+            _environment = environment;
         }
 
         public IActionResult Index(bool deletedOrder = false)

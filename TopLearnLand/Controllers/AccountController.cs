@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Routing;
 using TopLearn.Core.Security;
 using TopLearnLand_Core.Convertors;
 using TopLearnLand_Core.DTOs_ViewModels_;
@@ -22,11 +23,13 @@ namespace TopLearnLand.Controllers
     {
         private IUserService _userService;
         private IViewRenderService _viewRenderService;
+        private LinkGenerator _linkGenerator;
 
-        public AccountController(IUserService service, IViewRenderService viewRender, TopLearnLandContext context)
+        public AccountController(IUserService userService, IViewRenderService viewRenderService, LinkGenerator linkGenerator)
         {
-            _userService = service;
-            _viewRenderService = viewRender;
+            _userService = userService;
+            _viewRenderService = viewRenderService;
+            _linkGenerator = linkGenerator;
         }
         
         #region Register
@@ -38,14 +41,19 @@ namespace TopLearnLand.Controllers
         [HttpPost]
         public IActionResult Register(RegisterViewModels register)
         {
+            /*var registerUrl = _linkGenerator.GetPathByAction("Register", "Account", new { });*/
+
             #region ModelState Validations
+
             if (!ModelState.IsValid)
             {
                 return View(register);
             }
+
             #endregion
 
             #region Check Exist UserName & Email
+
             if (_userService.IsExistUserName(register.UserName))
             {
                 ModelState.AddModelError("UserName", "نام کاربری نمیتواد تکراری باشد");
@@ -57,9 +65,11 @@ namespace TopLearnLand.Controllers
                 ModelState.AddModelError("Email", "ایمیل نمیتواد تکراری باشد");
                 return View(register);
             }
+
             #endregion
 
             #region Add User
+
             User user = new User()
             {
                 ActiveCode = NameGenerator.GenericUniqCode(),
@@ -71,13 +81,16 @@ namespace TopLearnLand.Controllers
                 UserAvatar = "Defult.jpg",
             };
             _userService.AddUser(user);
+            
             #endregion
 
             #region Send Activation Email
+
             //badane ya ghalebe email hala tarahi shod
             string bodyEmail = _viewRenderService.RenderToStringAsync("_ActiveEmails", user);
             //send email
             SendEmail.Send(user.Email, "فعالسازی حساب کاربری", bodyEmail);
+
             #endregion
 
             return View("SuccessRegister", user);
@@ -294,11 +307,14 @@ namespace TopLearnLand.Controllers
         #endregion
 
         #region AccessDenied
+
         [Route("AccessDenied")]
         public IActionResult AccessDenied()
         {
             return View();
         }
+
+        /*public IActionResult AccessDened() => StatusCode(200);*/
 
         #endregion
     }
