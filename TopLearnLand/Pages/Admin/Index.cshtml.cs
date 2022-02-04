@@ -11,8 +11,8 @@ using TopLearnLand_Core.Services.InterFaces;
 
 namespace TopLearnLand.Pages.Admin
 {
-    [Authorize]
-    [PermissionChecker(1)]
+    /*[Authorize]
+    [PermissionChecker(1)]*/
     public class IndexModel : PageModel
     {
         private IUserService _userService;

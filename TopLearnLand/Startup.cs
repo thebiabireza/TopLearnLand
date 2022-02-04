@@ -1,7 +1,10 @@
 using System;
 using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
 using System.IO;
 using System.Linq;
+using System.Net.Http;
+using System.Security.Claims;
 using System.Text;
 using System.Text.Encodings.Web;
 using System.Text.Unicode;
@@ -19,11 +22,14 @@ using TopLearnLand_Core.Services.InterFaces;
 using TopLearnLand_Core.Services;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authentication.OAuth;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.CookiePolicy;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.Extensions.Options;
 using TopLearnLand_Core.Convertors;
 using Microsoft.AspNetCore.Http.Features;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.Abstractions;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.AspNetCore.Rewrite;
@@ -32,7 +38,10 @@ using Microsoft.Extensions.Internal;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using Newtonsoft.Json;
 using Swashbuckle.AspNetCore.SwaggerGen;
+using TopLearnLand.Controllers;
+using TopLearnLand_Core.Helpers;
 using TopLearnLand_Core.Security;
 using WebMarkupMin.AspNet.Common;
 using WebMarkupMin.AspNetCore3;
@@ -43,41 +52,153 @@ namespace TopLearnLand
     public class Startup
     {
         public IConfiguration Configuration { get; set; }
-        public IProtectionProvider _protectionProvider;
 
-        public Startup(IProtectionProvider protectionProvider, IConfiguration configuration)
+        public Startup(IConfiguration configuration)
         {
-            _protectionProvider = protectionProvider;
             Configuration = configuration;
         }
-        // This method gets called by the runtime. Use this method to add services to the container.
-        // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="services"></param>
         public void ConfigureServices(IServiceCollection services)
         {
+            /*var myMaxModelBindingCollectionSize = Convert.ToInt32(
+                Configuration["MyMaxModelBindingCollectionSize"] ?? "100");
+
+            services.Configure<MvcOptions>(options =>
+                   options.MaxModelBindingCollectionSize = myMaxModelBindingCollectionSize);*/
+
             /*services.AddSession();
             services.AddSingleton(HtmlEncoder.Create(allowedRanges: new[] { UnicodeRanges.BasicLatin, UnicodeRanges.Arabic }));
 
             services.AddSingleton<ILinkTools, LinkTools>();
             services.AddRecaptcha(Configuration.GetSection("RecaptchaSettings"));*/
 
-            services.Configure<IISServerOptions>(options =>
+            /*services.Configure<IISServerOptions>(options =>
             {
                 options.MaxRequestBodySize = int.MaxValue;
-                /*options.AllowSynchronousIO = true;
+                *//*options.AllowSynchronousIO = true;
                 options.AuthenticationDisplayName = "Auth_displayeName";
-                options.AutomaticAuthentication = false;*/
+                options.AutomaticAuthentication = false;*//*
             });
-            services.Configure<FormOptions>(options => { options.MultipartBodyLengthLimit = 52428800; });//==> other platform
+            services.Configure<FormOptions>(options => { options.MultipartBodyLengthLimit = 52428800; });//==> other platform*/
+
+            #region Identity System
+
+            /*services.AddIdentity<ApplicationUser, IdentityRole>(options =>
+            {
+                options.Password.RequiredUniqueChars = 0;
+
+                options.User.RequireUniqueEmail = true;
+                options.User.AllowedUserNameCharacters =
+                    "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-";
+
+                options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(15);
+                // Password settings.
+                options.Password.RequireDigit = true;
+                options.Password.RequireLowercase = true;
+                options.Password.RequireNonAlphanumeric = true;
+                options.Password.RequireUppercase = true;
+                options.Password.RequiredLength = 6;
+                options.Password.RequiredUniqueChars = 1;
+
+                // Lockout settings.
+                options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(10);
+                options.Lockout.MaxFailedAccessAttempts = 5;
+                options.Lockout.AllowedForNewUsers = true;
+
+                // User settings.
+                options.User.AllowedUserNameCharacters =
+                    "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._@+";
+                options.User.RequireUniqueEmail = true;
+
+                //Signin
+                options.SignIn.RequireConfirmedAccount = false;
+                options.SignIn.RequireConfirmedEmail = true;
+                options.SignIn.RequireConfirmedPhoneNumber = true;
+
+                //TODO Search for Stores
+                options.Stores.MaxLengthForKeys = Int32.MaxValue;
+                options.Stores.ProtectPersonalData = false;
+
+                //TODO Search for Tokens
+                options.Tokens.AuthenticatorIssuer = "";
+                options.Tokens.AuthenticatorTokenProvider = "";
+                options.Tokens.ChangeEmailTokenProvider = "";
+                options.Tokens.ChangePhoneNumberTokenProvider = "";
+                options.Tokens.EmailConfirmationTokenProvider = "";
+                options.Tokens.PasswordResetTokenProvider = "";
+
+                //TODO Search for ClaimsIdentity
+                options.ClaimsIdentity.RoleClaimType = "";
+                options.ClaimsIdentity.SecurityStampClaimType = ToString();
+                options.ClaimsIdentity.UserIdClaimType = "";
+                options.ClaimsIdentity.UserNameClaimType = "";
+            })
+                .AddEntityFrameworkStores<AppDbContext>()
+                .AddDefaultTokenProviders()
+                .AddErrorDescriber<PersianIdentityErrorDescriber>();*/
+
+            #region Set Cookie options
+
+            services.ConfigureApplicationCookie(options =>
+            {
+                #region other
+
+                /*options.AccessDeniedPath = "/Account/AccessDenied";
+                //options.Cookie.Name = "IdentityProj";
+                options.LoginPath = "/Account/Login";
+                options.ReturnUrlParameter = CookieAuthenticationDefaults.ReturnUrlParameter;*/
+
+                #endregion
+                // Cookie settings
+                options.Cookie.Domain = "";
+                options.Cookie.Expiration = TimeSpan.FromDays(44);
+                options.Cookie.IsEssential = true;
+                options.Cookie.MaxAge = TimeSpan.Zero;
+                options.Cookie.Name = "";
+                options.Cookie.Path = "";
+                options.Cookie.SameSite = SameSiteMode.Strict;
+                options.Cookie.SecurePolicy = CookieSecurePolicy.SameAsRequest;
+                options.Cookie.HttpOnly = true;
+                //options.CookieManager = new CookieManager();//TODO khodam bayad config konam (search google)
+                options.DataProtectionProvider = new EphemeralDataProtectionProvider();//TODO Set this dataProtection Service
+                //TODO Set this SessionStore Service
+                /*options.SessionStore*/
+                /*options.TicketDataFormat= new SecureDataFormat<AuthenticationTicket>(); => //TODO Set this TicketDataFormat Service
+                options.TicketDataFormat= new TicketDataFormat();*///TODO Set this TicketDataFormat Service
+                /*options.ClaimsIssuer = new List<Claim>();*///TODO Set this ClaimsIssuer Service
+                options.ExpireTimeSpan = TimeSpan.FromMinutes(30);
+                options.LoginPath = "/Login";
+                options.LogoutPath = "/Logout";
+                options.AccessDeniedPath = "/AccessDenied";
+                /*--Set CookieAuthenticationEvents--*/
+                //options.Events = new CookieAuthenticationEvents()
+                //{
+                //    OnValidatePrincipal = LastChangedValidator.ValidateAsync,
+
+                //};
+            });
+
+            #endregion
+
+            services.Configure<SecurityStampValidatorOptions>(option =>
+            {
+                // option.ValidationInterval = TimeSpan.FromSeconds(15);
+            });
+
+            #endregion
 
             #region Add HttpClient For Call Api Server
 
-            services.AddHttpClient("Client_Name", client =>
+            /*services.AddHttpClient("Client_Name", client =>
             {
                 client.BaseAddress = new Uri("api server url");
                 client.MaxResponseContentBufferSize = Int64.MaxValue;
                 client.Timeout = TimeSpan.FromDays(4);
                 client.DefaultRequestVersion = Version.Parse("s");
-            });
+            });*/
 
             #endregion
 
@@ -121,6 +242,11 @@ namespace TopLearnLand
                 options.UseSqlServer(Configuration.GetConnectionString("TopLearnLandConnection"));
             });
 
+            #endregion
+
+            #region HttpContextAccessor
+
+            services.AddHttpContextAccessor();
 
             #endregion
 
@@ -133,8 +259,8 @@ namespace TopLearnLand
             services.AddTransient<IViewRenderService, RenderViewToString>();
             services.AddTransient<IImageConvertor, ImageConvertor>();
 
-            services.AddScoped<IEmailSenderService, EmailSenderService>();
-            services.AddScoped<IProtectionProvider, ProtectionProvider>();
+            /*services.AddScoped<IEmailSenderService, EmailSenderService>();
+            services.AddScoped<IProtectionProvider, ProtectionProvider>();*/
 
             #endregion
 
@@ -157,9 +283,147 @@ namespace TopLearnLand
                 options.ReturnUrlParameter = CookieAuthenticationDefaults.ReturnUrlParameter;
                 options.Events = new CookieAuthenticationEvents()
                 {
-                    //TODO Config Events
+                    OnRedirectToAccessDenied = (context) =>
+                    {
+                        context.RedirectUri = new PathString($"/AccessDenied");
+                        //return context.Response.Redirect(context.RedirectUri);
+                        return Task.CompletedTask;
+                    },
+                    OnRedirectToLogin = context =>
+                    {
+                        context.RedirectUri = new PathString($"/Login");
+                        return Task.CompletedTask;
+                    },
                 };
-            });
+            }).AddOAuth(CookieAuthenticationDefaults.AuthenticationScheme, configure =>
+             {
+                 configure.Events = new OAuthEvents()
+                 {
+                     OnCreatingTicket = (context) =>
+                     {
+                         var accessToken = context.AccessToken;//TODO my access Token
+                         var jwtPayload = accessToken.Split(".")[1];//TODO Payload of JWt
+                         var jwtBytes = Convert.FromBase64String(jwtPayload);
+                         var jsonpayload = Encoding.UTF8.GetString(jwtBytes);
+                         var claims = JsonConvert.DeserializeObject<Dictionary<string, string>>(jsonpayload);
+
+                         foreach (var claim in claims)
+                         {
+                             context.Identity.AddClaim(new Claim(claim.Key, claim.Value));
+                         }
+
+                         return Task.CompletedTask;
+                     }
+                 };
+                 configure.AuthorizationEndpoint = $"set or get==>https://fikaland.com/auth";
+                 configure.TokenEndpoint = $"set or get==>https://fikaland.com/auth/token";
+                 configure.ClaimActions.ToList();
+                 configure.ClientId = "myClient-Id";
+                 //configure.ClientSecret.Where(s => s.CompareTo(s)).ToList();
+                 //configure.Scope.Where(s => s.Trim(new char() { s }));
+                 //configure.StateDataFormat.Protect();
+                 configure.UsePkce = true;
+                 configure.UserInformationEndpoint = "userInfo Endpoint";
+                 configure.AccessDeniedPath = $"{typeof(AccountController)}/{"AccessDenied"}";
+                 /*configure.BackchannelHttpHandler = new HttpClientHandler()
+                 {
+                     AllowAutoRedirect = true,
+                     AutomaticDecompression = ,
+                     CheckCertificateRevocationList = true,
+                     ClientCertificateOptions = ,
+                     UseCookies = true,
+                 };*/
+                 configure.BackchannelTimeout = TimeSpan.FromHours(8);
+                 configure.CallbackPath = "callback Path";
+                 configure.ClaimsIssuer = "";
+                 configure.ReturnUrlParameter = CookieAuthenticationDefaults.ReturnUrlParameter;
+             });
+
+            #region Configure Identity Cookie
+
+            /*services.AddAuthentication(options =>
+            {
+                options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+            }).AddIdentityCookies(o =>
+            {
+                o.ApplicationCookie = new OptionsBuilder<CookieAuthenticationOptions>(services, "name").Configure(c =>
+                {
+                    c.Cookie = new CookieBuilder()
+                    {
+                        Domain = "domain",
+                        Expiration = TimeSpan.FromDays(2),
+                        HttpOnly = true,
+                        IsEssential = true,
+                        MaxAge = TimeSpan.FromDays(5),
+                        Name = "cookie-name",
+                        Path = new PathString("path"),
+                        SameSite = SameSiteMode.Strict,
+                        SecurePolicy = CookieSecurePolicy.Always
+                    };
+                    c.SlidingExpiration = true;
+                    c.AccessDeniedPath = new PathString($"/account/accessDenied");
+                    c.LoginPath = new PathString($"/account/login");
+                    c.LogoutPath = new PathString($"/account/logout");
+                    c.ReturnUrlParameter = CookieAuthenticationDefaults.ReturnUrlParameter;
+                    c.ExpireTimeSpan = TimeSpan.FromDays(5);
+                    c.Events = new CookieAuthenticationEvents()
+                    {
+                        OnRedirectToAccessDenied = (context) =>
+                        {
+                            context.RedirectUri = new PathString($"/account/accessDenied");
+                            return Task.CompletedTask;
+                        },
+                        OnRedirectToLogin = context =>
+                        {
+                            context.RedirectUri = new PathString($"/account/login");
+                            return Task.CompletedTask;
+                        },
+                    };
+                    //c.TicketDataFormat = new TicketDataFormat();
+                    //c.DataProtectionProvider = new EphemeralDataProtectionProvider();
+                    //c.SessionStore;
+                    //c.CookieManager = new SecureCookiesProvider(new ProtectionProvider());
+                });
+                o.ExternalCookie.Configure(configureOptions =>
+                {
+                    configureOptions.Cookie = new CookieBuilder()
+                    {
+                        Domain = "domain",
+                        Expiration = TimeSpan.FromDays(2),
+                        HttpOnly = true,
+                        IsEssential = true,
+                        MaxAge = TimeSpan.FromDays(5),
+                        Name = "cookie-name",
+                        Path = new PathString("path"),
+                        SameSite = SameSiteMode.Strict,
+                        SecurePolicy = CookieSecurePolicy.Always
+                    };
+                    configureOptions.SlidingExpiration = true;
+                    configureOptions.AccessDeniedPath = new PathString($"/account/accessDenied");
+                    configureOptions.LoginPath = new PathString($"/account/login");
+                    configureOptions.LogoutPath = new PathString($"/account/logout");
+                    configureOptions.ReturnUrlParameter = CookieAuthenticationDefaults.ReturnUrlParameter;
+                    configureOptions.ExpireTimeSpan = TimeSpan.FromDays(5);
+                    configureOptions.Events = new CookieAuthenticationEvents()
+                    {
+                        OnRedirectToAccessDenied = (context) =>
+                        {
+                            context.RedirectUri = new PathString($"/account/accessDenied");
+                            return Task.CompletedTask;
+                        },
+                        OnRedirectToLogin = context =>
+                        {
+                            context.RedirectUri = new PathString($"/account/login");
+                            return Task.CompletedTask;
+                        },
+                    };
+                });
+                //o.TwoFactorRememberMeCookie;
+                //o.TwoFactorUserIdCookie;
+            });*/
+
+            #endregion
 
             #region Config Coolie Authentication (event,...)
 
@@ -175,7 +439,7 @@ namespace TopLearnLand
 
             #region Cookie policy Options
 
-            services.Configure<CookiePolicyOptions>(option =>
+            /*services.Configure<CookiePolicyOptions>(option =>
             {
                 option.CheckConsentNeeded = context => true;
                 option.ConsentCookie.SameSite = SameSiteMode.Lax;
@@ -196,7 +460,7 @@ namespace TopLearnLand
                     Secure = true
                 });
                 option.Secure = CookieSecurePolicy.SameAsRequest;
-            });
+            });*/
 
             #endregion
 
@@ -214,9 +478,13 @@ namespace TopLearnLand
 
             services.AddAuthorization(options =>
             {
+                //var defaultAuthBuilder = new AuthorizationPolicyBuilder();
+                //var defaultAuthPolicy = defaultAuthBuilder.AddRequirements(new JwtRequirement()).Build();
+                //options.DefaultPolicy = defaultAuthPolicy;
+
                 options.AddPolicy("AdminOnly", policy => policy.RequireClaim("Admin"));
             });
-
+            //services.AddScoped<IAuthorizationHandler, JwtRequirementHandler>();
             #endregion
 
             #region Access DirectoryBrowser
@@ -225,12 +493,13 @@ namespace TopLearnLand
 
             #endregion
 
-            //TODO Api Documention
+            //TODO Api Documentation Generator
             #region Api Documrnt Sections 
 
-            #region Add Cors Api
-
+            //TODO JWT 
             #region JWT WebTokens Authentication
+
+            #region Full Example
 
             /*services.AddAuthentication(config =>
             {
@@ -298,6 +567,147 @@ namespace TopLearnLand
 
             #endregion
 
+            services.AddAuthentication(config =>
+            {
+                config.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                config.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                config.DefaultSignInScheme = JwtBearerDefaults.AuthenticationScheme;
+                config.DefaultSignOutScheme = JwtBearerDefaults.AuthenticationScheme;
+                config.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+                config.DefaultForbidScheme = JwtBearerDefaults.AuthenticationScheme;
+                //config.Schemes = new List<AuthenticationSchemeBuilder>();
+                config.RequireAuthenticatedSignIn = true;
+                //config.SchemeMap.Add("ass");
+            }).AddJwtBearer("Bearer", options =>
+            {
+
+                options.TokenValidationParameters = new TokenValidationParameters()
+                {
+                    #region Validation options
+
+                    ValidateIssuer = true,
+                    ValidateAudience = false,
+                    ValidateLifetime = true,
+                    ValidateActor = false,
+                    ValidateIssuerSigningKey = true,
+                    ValidateTokenReplay = false,
+                    ValidAudience = "valid client for connection our server{https://amir.ir}",
+                    ValidIssuer = "valid other server  {https://fikarender-game.com},{https://fikarender-land.com}",
+
+                    #endregion
+
+                    #region setup options(Issuer & Audience)
+
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("custom My security Key")),
+                    //IssuerSigningKeyValidator = new IssuerSigningKeyValidator().Target.ToString() //TODO Research for this section
+                    //IssuerSigningKeyResolver = new IssuerSigningKeyResolver() //TODO Research for this section
+                    //IssuerValidator = new IssuerValidator() //TODO Research for this section
+
+                    #endregion
+
+                    //TODO Search other tokenValidationParameter Options
+                };
+                options.Audience = "audience name";
+                options.Authority = "";
+                options.BackchannelHttpHandler.Dispose();
+                options.Challenge = "get or set the challenge to put----- header['WWW-Authenticate']";
+                options.SecurityTokenValidators.IsReadOnly.Equals(true);
+                options.SecurityTokenValidators[1].MaximumTokenSizeInBytes = Int32.MaxValue;
+                var securityToken = new JwtSecurityToken(JwtHeader.Base64UrlDeserialize("Sdsdsd"), JwtPayload.Deserialize("s"), rawHeader: "", rawPayload: "", rawSignature: "");
+                //options.SecurityTokenValidators.Where(s => s.ValidateToken(securityToken: securityToken.ToString(),
+                //    validationParameters: new TokenValidationParameters(), out securityToken));
+                options.SaveToken = true;
+                options.Events = new JwtBearerEvents()
+                {
+                    /*OnTokenValidated = context =>
+                    {
+                        context.SecurityToken.SecurityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("sdad"));
+                    },
+                    OnAuthenticationFailed = context => { },
+                    OnChallenge = (context) =>
+                    {
+                        if (context.Request.Query.ContainsKey("access_token"))
+                        {
+                            context.Token = context.Request.Query["access_token"];
+                            return Task.CompletedTask;
+                        }
+                    },
+                    OnForbidden = (context) =>
+                    {
+                        if (context.Request.Query.ContainsKey("access_token"))
+                        {
+                            context.Token = context.Request.Query["access_token"];
+                            return Task.CompletedTask;
+                        }
+                    },
+                    OnMessageReceived = (context) =>
+                    {
+                        if (context.Request.Query.ContainsKey("access_token"))
+                        {
+                            context.Token = context.Request.Query["access_token"];
+                            return Task.CompletedTask;
+                        }
+                    },*/
+                };
+                options.RefreshOnIssuerKeyNotFound = false;
+                options.RequireHttpsMetadata = true;
+                options.BackchannelTimeout = TimeSpan.FromDays(5);
+                options.IncludeErrorDetails = false;
+                //TODO Search other
+            })
+            #region Open Authentication(OAuth)
+
+            .AddOAuth(CookieAuthenticationDefaults.AuthenticationScheme, configure =>
+             {
+                 configure.Events = new OAuthEvents()
+                 {
+                     OnCreatingTicket = (context) =>
+                     {
+                         var accessToken = context.AccessToken;//TODO my access Token
+                         var jwtPayload = accessToken.Split(".")[1];//TODO Payload of JWt
+                         var jwtBytes = Convert.FromBase64String(jwtPayload);
+                         var jsonpayload = Encoding.UTF8.GetString(jwtBytes);
+                         var claims = JsonConvert.DeserializeObject<Dictionary<string, string>>(jsonpayload);
+
+                         foreach (var claim in claims)
+                         {
+                             context.Identity.AddClaim(new Claim(claim.Key, claim.Value));
+                         }
+
+                         return Task.CompletedTask;
+                     }
+                 };
+                 configure.AuthorizationEndpoint = $"set or get==>https://fikaland.com/auth";
+                 configure.TokenEndpoint = $"set or get==>https://fikaland.com/auth/token";
+                 configure.ClaimActions.ToList();
+                 configure.ClientId = "myClient-Id";
+                 //configure.ClientSecret.Where(s => s.CompareTo(s)).ToList();
+                 //configure.Scope.Where(s => s.Trim(new char() { s }));
+                 //configure.StateDataFormat.Protect();
+                 configure.UsePkce = true;
+                 configure.UserInformationEndpoint = "userInfo Endpoint";
+                 configure.AccessDeniedPath = $"{typeof(AccountController)}/{"AccessDenied"}";
+                 //configure.BackchannelHttpHandler = new HttpClientHandler()
+                 //{
+                 //    AllowAutoRedirect = true,
+                 //    AutomaticDecompression = ,
+                 //    CheckCertificateRevocationList = true,
+                 //    ClientCertificateOptions = ,
+                 //    UseCookies = true,
+                 //};
+                 //configure.BackchannelTimeout = TimeSpan.FromHours(8);
+                 configure.CallbackPath = "callback Path";
+                 configure.ClaimsIssuer = "";
+                 configure.ReturnUrlParameter = CookieAuthenticationDefaults.ReturnUrlParameter;
+             });
+
+            #endregion
+
+            #endregion
+
+            //TODO Cors Api
+            #region Add Cors Api
+
             //TODO access other application for use our webapp
             /*services.AddCors(corsOptions =>
             {
@@ -335,22 +745,23 @@ namespace TopLearnLand
 
             #endregion
 
+            //TODO Swagger
             #region Add Api Document Generator(Swagger)
 
-            services.AddSwaggerGen(swagger =>
+            /*services.AddSwaggerGen(swagger =>
             {
                 swagger.SwaggerDoc("Firs Api Document", new OpenApiInfo()
                 {
                     Title = "FikaRender Api Service",
                     Description = "my description",
                     Version = "1.0.0",
-                    /*Contact = ,
+                    *//*Contact = ,
                     Extensions = ,
                     License = ,
-                    TermsOfService =*/
+                    TermsOfService =*//*
                 });
                 swagger.IncludeXmlComments(Path.Combine(Directory.GetCurrentDirectory(), @"TopLearnLand\TopLearnLand", "TopLearnLand.xml"));
-                /*swagger.DocumentFilterDescriptors = new List<FilterDescriptor>() { };
+                *//*swagger.DocumentFilterDescriptors = new List<FilterDescriptor>() { };
                 swagger.OperationFilterDescriptors = new List<FilterDescriptor>();
                 swagger.ParameterFilterDescriptors = new List<FilterDescriptor>();
                 swagger.RequestBodyFilterDescriptors = new List<FilterDescriptor>();
@@ -372,11 +783,11 @@ namespace TopLearnLand
                     s.SupportedResponseTypes = new List<ApiResponseType>();*//*
                 });
                 swagger.CustomSchemaIds(s=>{});
-                swagger.DescribeAllParametersInCamelCase();*/
+                swagger.DescribeAllParametersInCamelCase();*//*
                 //TODO Other Options
-            });
+            });*/
 
-#endregion
+            #endregion
 
             #endregion
 
@@ -516,7 +927,18 @@ namespace TopLearnLand
 
             #region Create Default page html (Intro WebPage)
 
-            /*var options = new DefaultFilesOptions();
+            /*app.UseFileServer(new FileServerOptions()
+            {
+                EnableDefaultFiles = true,
+                EnableDirectoryBrowsing = true,
+                FileProvider = new PhysicalFileProvider("file-provider")
+                {
+                    UseActivePolling = true,
+                    UsePollingFileWatcher = false
+                },
+                RequestPath = Path.Combine(Directory.GetCurrentDirectory(),"wwwroot\\default")
+            });
+            var options = new DefaultFilesOptions();
             options.DefaultFileNames.Clear();
             options.DefaultFileNames.Add("customIndex.html");
             app.UseDefaultFiles(options);*/
@@ -525,11 +947,11 @@ namespace TopLearnLand
 
             #region Swagger
 
-            app.UseSwagger();
+            /*app.UseSwagger();
             app.UseSwaggerUI(config =>
             {
                 config.SwaggerEndpoint("/swagger/1.0.0/swagger.json", "My First Swagger");
-            });
+            });*/
 
             #endregion
 
@@ -589,7 +1011,7 @@ namespace TopLearnLand
 
             /*app.UseCors(policy =>
             {
-                policy.WithOrigins("PolicyName");//TODO more options similar top add cors services
+                policy.WithOrigins(new string[]{ "PolicyName" , "PolicyName2..." });//TODO more options similar top add cors services
             });*/
 
             #endregion

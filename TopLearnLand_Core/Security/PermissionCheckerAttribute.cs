@@ -15,7 +15,9 @@ namespace TopLearnLand_Core.Security
         private IPermissionService _permissionService;
         private IUserService _userService;
 
-        public PermissionCheckerAttribute(IPermissionService permissionService, IUserService userService)
+        public PermissionCheckerAttribute(
+            IPermissionService permissionService, 
+            IUserService userService)
         {
             _permissionService = permissionService;
             _userService = userService;

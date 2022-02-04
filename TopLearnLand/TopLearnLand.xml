@@ -4,5 +4,11 @@
         <name>TopLearnLand</name>
     </assembly>
     <members>
+        <member name="M:TopLearnLand.Startup.ConfigureServices(Microsoft.Extensions.DependencyInjection.IServiceCollection)">
+            <summary>
+            
+            </summary>
+            <param name="services"></param>
+        </member>
     </members>
 </doc>

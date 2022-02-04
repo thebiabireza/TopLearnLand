@@ -1,21 +1,26 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
+using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
+using Microsoft.IdentityModel.Tokens;
 using TopLearn.Core.Security;
 using TopLearnLand_Core.Convertors;
 using TopLearnLand_Core.DTOs_ViewModels_;
 using TopLearnLand_Core.Generator;
+using TopLearnLand_Core.Helpers;
 using TopLearnLand_Core.Senders;
 using TopLearnLand_Core.Services.InterFaces;
 using TopLearnLand_DataLayer.Context;
 using TopLearnLand_DataLayer.Entities.User;
+using JwtRegisteredClaimNames = Microsoft.IdentityModel.JsonWebTokens.JwtRegisteredClaimNames;
 
 namespace TopLearnLand.Controllers
 {
@@ -25,13 +30,15 @@ namespace TopLearnLand.Controllers
         private IViewRenderService _viewRenderService;
         private LinkGenerator _linkGenerator;
 
-        public AccountController(IUserService userService, IViewRenderService viewRenderService, LinkGenerator linkGenerator)
+        public AccountController(IUserService userService,
+            IViewRenderService viewRenderService, 
+            LinkGenerator linkGenerator)
         {
             _userService = userService;
             _viewRenderService = viewRenderService;
             _linkGenerator = linkGenerator;
         }
-        
+
         #region Register
 
         [Route("Register")]
@@ -81,7 +88,7 @@ namespace TopLearnLand.Controllers
                 UserAvatar = "Defult.jpg",
             };
             _userService.AddUser(user);
-            
+
             #endregion
 
             #region Send Activation Email
@@ -97,7 +104,7 @@ namespace TopLearnLand.Controllers
         }
 
         #endregion
-        
+
         #region Login
 
         [Route("Login")]
@@ -111,7 +118,7 @@ namespace TopLearnLand.Controllers
                 ReturnUrl = returnUrl
             });
         }
-        
+
         [Route("login")]
         [HttpPost]
         public IActionResult Login(LoginViewModels login, string returnUrl = null)
@@ -127,7 +134,7 @@ namespace TopLearnLand.Controllers
             #endregion
 
             User userlogin = _userService.LoginUser(login);
-            
+
             //bayad check konim ke useri ba in email vojud dare ya na
             if (userlogin != null)
             {
@@ -144,6 +151,35 @@ namespace TopLearnLand.Controllers
                         new Claim(ClaimTypes.Name, userlogin.UserName),
                         new Claim(ClaimTypes.Email,userlogin.Email)
                     };
+
+                    #region JWT Claims
+
+                    if (Request.IsAjaxRequest())
+                    {
+                        var jwtClaims = new List<Claim>
+                        {
+                            new Claim(JwtRegisteredClaimNames.Sub,"sum_id"),
+                            new Claim(JwtRegisteredClaimNames.Email,"example@gmail.com"),
+                            new Claim(JwtRegisteredClaimNames.Birthdate,"11/5/1998"),
+                            new Claim(JwtRegisteredClaimNames.FamilyName,"biabi"),
+                        };
+                        var secretBytes = Encoding.UTF8.GetBytes(Constants.Secret);
+                        var key = new SymmetricSecurityKey(secretBytes);
+                        var algorithm = SecurityAlgorithms.HmacSha256;
+                        var signingCredentials = new SigningCredentials(key: key, algorithm: algorithm);
+
+                        var token = new JwtSecurityToken(
+                            issuer: Constants.Issuer, audience: Constants.Audiance,
+                            claims: jwtClaims, notBefore: DateTime.Now, expires: DateTime.Now.AddDays(30),
+                            signingCredentials: signingCredentials);
+
+                        var jsonToken = new JwtSecurityTokenHandler().WriteToken(token);
+                        //var _userService = (IUserService)HttpContext.RequestServices.GetService(typeof(IUserService));
+                        //Todo Get Access_Token in global from HttpRequest
+                        //token = await HttpContext.GetTokenAsync("scheme", tokenName: "access_token");
+                        return Ok(new {access_token = jsonToken});
+                    }
+                    #endregion
 
                     #region Add UserRoles Claims
 
@@ -199,6 +235,28 @@ namespace TopLearnLand.Controllers
             ModelState.AddModelError("Email", "کاربری به این مشخصات درسیستم وجود ندارد");
             return View(login);
         }
+
+        //TODO DecodeJwtToken
+        public async Task<IActionResult> DecodeJwtToken(string partOfJwt)
+        {
+            var jwtBytes = Convert.FromBase64String(partOfJwt);
+            return Ok(Encoding.UTF8.GetString(jwtBytes));
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        public IActionResult ValidateAccessToken()
+        {
+            if (HttpContext.Request.Query.TryGetValue("access_token",out var accessToken))
+            {
+
+                return Ok();
+            }
+            return BadRequest();
+        }
+
         #endregion
 
         #region Logout

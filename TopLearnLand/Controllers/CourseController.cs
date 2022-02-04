@@ -55,7 +55,8 @@ namespace TopLearnLand.Controllers
         {
             string currentUserId = User.Identity.Name;
             int orderId = _orderService.AddOrder(currentUserId, courseId);
-            return Redirect("/UserPanel/MyOrder/ShowOrder/" + orderId);
+            //return Redirect("/UserPanel/MyOrder/ShowOrder/" + orderId);
+            return RedirectToAction("ShowOrder","MyOrder", new {orderId = orderId});
         }
 
         [Route("DownLoadFile/{episodeId}")]
@@ -105,7 +106,6 @@ namespace TopLearnLand.Controllers
             comment.CreateCommentDate = DateTime.Now;
             comment.UserId = _userService.GetUserIdByUserName(User.Identity.Name);
             _courseService.AddComment(comment);
-
 
             return View("ShowComments",_courseService.GeComments(comment.CourseId));
         }
